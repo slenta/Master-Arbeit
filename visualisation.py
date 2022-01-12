@@ -36,4 +36,4 @@ def visualisation(iter):
     plt.savefig('../Asi_maskiert/results/images/part_1/test_' + iter + '.pdf')
     plt.show()
 
-visualisation('400000')
+visualisation('400098')

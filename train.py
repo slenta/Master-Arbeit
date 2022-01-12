@@ -56,7 +56,7 @@ parser.add_argument('--max_iter', type=int, default=800000)
 parser.add_argument('--batch_size', type=int, default=4)
 parser.add_argument('--n_threads', type=int, default=4) 
 parser.add_argument('--save_model_interval', type=int, default=50000)
-parser.add_argument('--vis_interval', type=int, default=2)
+parser.add_argument('--vis_interval', type=int, default=50000)
 parser.add_argument('--log_interval', type=int, default=50000)
 parser.add_argument('--image_size', type=int, default=256)
 parser.add_argument('--resume_iter', type=str, default=400000)
@@ -82,7 +82,7 @@ mask_tf = transforms.Compose(
     [transforms.ToTensor()])
 
 dataset_train = MaskDataset(args.mask_year, mode='train')
-dataset_val = SpecificValDataset(323, '11_1985')
+dataset_val = MaskDataset(args.mask_year, mode='val')
 
 iterator_train = iter(data.DataLoader(dataset_train, 
     batch_size=args.batch_size, sampler=InfiniteSampler(len(dataset_train)),
@@ -133,6 +133,6 @@ for i in tqdm(range(start_iter, args.max_iter)):
     if (i + 1) % args.vis_interval == 0:
         model.eval()
         evaluate(model, dataset_val, device,
-                 '{:s}/images/part_1/test_{:d}'.format(args.save_dir, i + 1))
+                 '{:s}/images/part_2/test_{:d}'.format(args.save_dir, i + 1))
 
 writer.close()
