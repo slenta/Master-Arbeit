@@ -34,11 +34,7 @@ def evaluate(model, dataset, device, filename):
     dset1 = f.create_dataset('image', (n[1], n[2], n[3]), dtype = 'float32',data = gt)
     dset2 = f.create_dataset('output', (n[1], n[2], n[3]), dtype = 'float32',data = output)
     dset3 = f.create_dataset('output_comp', (n[1], n[2], n[3]), dtype = 'float32',data = output_comp)
-<<<<<<< HEAD
-    dset4 = f.create_dataset('mask', shape=(n[1], n[2], n[3]), dtype='float32', data=mask)
-=======
-    dset4 = f.create_dataset('mask', shape=(n[1], n[2], n[3]), dtype='float32', data=mask)    
->>>>>>> 8c3ca9f1b497620e8a50a62f5c1bc67280297439
+    dset4 = f.create_dataset('mask', shape=(n[1], n[2], n[3]), dtype='float32', data=mask) 
     f.close()
     
     save_image(grid, filename + '.jpg')
