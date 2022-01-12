@@ -88,7 +88,8 @@ iterator_train = iter(data.DataLoader(dataset_train,
     batch_size=args.batch_size, sampler=InfiniteSampler(len(dataset_train)),
     num_workers=args.n_threads))
 print(len(dataset_train))
-model = PConvUNet()
+
+model = PConvUNet().to(device)
 
 if args.finetune:
     lr = args.lr_finetune
@@ -99,7 +100,7 @@ else:
 start_iter = 0
 optimizer = torch.optim.Adam(
     filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
-criterion = InpaintingLoss(VGG16FeatureExtractor())
+criterion = InpaintingLoss(VGG16FeatureExtractor()).to(device)
 
 if args.resume_iter:
     start_iter = load_ckpt(
@@ -110,7 +111,7 @@ if args.resume_iter:
 
 for i in tqdm(range(start_iter, args.max_iter)):
     model.train()
-    image, mask, gt = [x for x in next(iterator_train)]
+    image, mask, gt = [x.to(device) for x in next(iterator_train)]
     output, _ = model(image, mask)
     loss_dict = criterion(image, mask, output, gt)
 
