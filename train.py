@@ -51,18 +51,15 @@ parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--mask_year', type=str, default='1970')
 parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--lr_finetune', type=float, default=5e-5)
-<<<<<<< HEAD
 parser.add_argument('--max_iter', type=int, default=2)
-=======
 parser.add_argument('--max_iter', type=int, default=400000)
->>>>>>> 8c3ca9f1b497620e8a50a62f5c1bc67280297439
 parser.add_argument('--batch_size', type=int, default=4)
 parser.add_argument('--n_threads', type=int, default=4) 
-parser.add_argument('--save_model_interval', type=int, default=1)
-parser.add_argument('--vis_interval', type=int, default=1)
-parser.add_argument('--log_interval', type=int, default=1)
+parser.add_argument('--save_model_interval', type=int, default=50000)
+parser.add_argument('--vis_interval', type=int, default=50000)
+parser.add_argument('--log_interval', type=int, default=50000)
 parser.add_argument('--image_size', type=int, default=256)
-parser.add_argument('--resume', type=str)
+parser.add_argument('--resume_iter', type=str, default=400000)
 parser.add_argument('--finetune', action='store_true')
 args = parser.parse_args()
 
@@ -104,9 +101,9 @@ optimizer = torch.optim.Adam(
     filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
 criterion = InpaintingLoss(VGG16FeatureExtractor())
 
-if args.resume:
+if args.resume_iter:
     start_iter = load_ckpt(
-        args.resume, [('model', model)], [('optimizer', optimizer)])
+        '{}/ckpt/{}.pth'.format(args.save_dir, args.resume_iter), [('model', model)], args.device, [('optimizer', optimizer)])
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     print('Starting from iter ', start_iter)
@@ -114,9 +111,6 @@ if args.resume:
 for i in tqdm(range(start_iter, args.max_iter)):
     model.train()
     image, mask, gt = [x for x in next(iterator_train)]
-    #print(image.shape)
-    #print(mask.shape)
-    #print(gt.shape)
     output, _ = model(image, mask)
     loss_dict = criterion(image, mask, output, gt)
 
