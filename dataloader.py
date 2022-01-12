@@ -18,7 +18,6 @@ import xarray as xr
 
 def preprocessing(path, name, year, type, plot):
     
-    #ds = nc.Dataset(path + 'Asi_maskiert/masked_images/'name + '.nc')
     ds = xr.load_dataset(path + name + year + '.nc', decode_times=False)
 
     #extract the variables from the file
@@ -71,8 +70,8 @@ def preprocessing(path, name, year, type, plot):
 
 
 #preprocessing('../Asi_maskiert/masked_images/', 'tos_r8_mask_en4_2004', type='image', plot=True)
-preprocessing('../Asi_maskiert/original_masks/', 'Observation_', '11_1985', type='mask', plot = False)
-preprocessing('../Asi_maskiert/original_image/', 'Observation_', '11_1985', type='image', plot=False)
+#preprocessing('../Asi_maskiert/original_masks/', 'Observation_', '11_1985', type='mask', plot = False)
+#preprocessing('../Asi_maskiert/original_image/', 'Observation_', '11_1985', type='image', plot=False)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_image', type='image', plot=True)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_masks', type='mask', plot=True)
 
@@ -159,18 +158,24 @@ class SpecificValDataset():
         gt = f_gt.get('tos_sym')
 
         #convert to pytorch tensors
-        im_new = torch.from_numpy(image[index, :, :])
-        mask = torch.from_numpy(mask_data[index, :, :])
+        im_new = torch.from_numpy(image[:, :, :])
+        mask = torch.from_numpy(mask_data[:, :, :])
         gt = torch.from_numpy(gt[self.timestep, :, :])
+
+        #bring into right shape   
+        mask = mask.repeat(3, 1, 1).unsqueeze(0)
+        im_new = im_new.repeat(3, 1, 1).unsqueeze(0)
+        gt = gt.repeat(3, 1, 1).unsqueeze(0)
+
 
         return im_new, mask, gt
 
 
 
 #create dataset
-#dataset = MaskDataset('2020')
-
+dataset = SpecificValDataset(323, '11_1985')
+print(dataset)
 #get sample and unpack
-#first_data = dataset
-#masked_image, mask, image = first_data[0]
+masked_image, mask, image = dataset[0]
+print(image.shape)
 
