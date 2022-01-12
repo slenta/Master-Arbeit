@@ -24,7 +24,7 @@ def preprocessing(path, name, year, type, plot):
     #extract the variables from the file
     if type == 'mask':
         sst = ds.tho.values[0, :, :]
-	print(sst.shape)
+        print(sst.shape)
         n = sst.shape
         
         for i in range(n[0]):
