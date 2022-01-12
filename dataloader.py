@@ -23,25 +23,25 @@ def preprocessing(path, name, year, type, plot):
 
     #extract the variables from the file
     if type == 'mask':
-        sst = ds.tho.values[:, 0, :, :]
-        x = np.isnan(sst)
-        #sst[x] = -9999
-        for i in range(12):
-            for j in range(220):
-                for k in range(256):
+        sst = ds.tho.values[0, :, :]
+        n = sst.shape
+        
+        for i in range(n[0]):
+            for j in range(n[1]):
+                for k in range(n[2]):
                     if np.isnan(sst[i, j, k]) == True:
                         sst[i, j, k] = 0
                     else:
                         sst[i, j, k] = 1
         
-        #print(np.shape(sst))
-        rest = np.ones((12, 36, 256)) * 0
+ 
+        rest = np.zeros((n[0], n[2] - n[1], n[2])) * 0
         sst_new = np.concatenate((sst, rest), axis=1)
         sst_new = np.repeat(sst_new, 63, axis=0)
-        #print(np.shape(sst_new))
+
         #create new h5 file with symmetric ssts
         f = h5py.File(path + name + year + '.hdf5', 'w')
-        dset1 = f.create_dataset('tos_sym', (756, 256, 256), dtype = 'float32', data = sst_new)
+        dset1 = f.create_dataset('tos_sym', (n[0], n[1], n[2]), dtype = 'float32', data = sst_new)
         f.close()
 
     if type == 'image':
