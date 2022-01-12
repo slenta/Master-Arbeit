@@ -70,8 +70,8 @@ def preprocessing(path, name, year, type, plot):
 
 
 #preprocessing('../Asi_maskiert/masked_images/', 'tos_r8_mask_en4_2004', type='image', plot=True)
-#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '1970', type='mask', plot = False)
-#preprocessing('../Asi_maskiert/original_image/', 'Image_', '2020', type='image', plot=False)
+preprocessing('../Asi_maskiert/original_masks/', 'Observation_', '11_1985', type='mask', plot = False)
+preprocessing('../Asi_maskiert/original_image/', 'Observation_', '11_1985', type='image', plot=False)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_image', type='image', plot=True)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_masks', type='mask', plot=True)
 

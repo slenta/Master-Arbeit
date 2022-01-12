@@ -13,6 +13,7 @@ from loss import InpaintingLoss
 from net import PConvUNet
 from net import VGG16FeatureExtractor
 from dataloader import MaskDataset
+from dataloader import SpecificValDataset
 from util.io import load_ckpt
 from util.io import save_ckpt
 
@@ -51,14 +52,14 @@ parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--mask_year', type=str, default='1970')
 parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--lr_finetune', type=float, default=5e-5)
-parser.add_argument('--max_iter', type=int, default=800000)
+parser.add_argument('--max_iter', type=int, default=400000)
 parser.add_argument('--batch_size', type=int, default=4)
 parser.add_argument('--n_threads', type=int, default=4) 
 parser.add_argument('--save_model_interval', type=int, default=50000)
 parser.add_argument('--vis_interval', type=int, default=50000)
 parser.add_argument('--log_interval', type=int, default=50000)
 parser.add_argument('--image_size', type=int, default=256)
-parser.add_argument('--resume_iter', type=str, default=400000)
+parser.add_argument('--resume_iter', type=str)
 parser.add_argument('--finetune', action='store_true')
 args = parser.parse_args()
 
@@ -81,7 +82,7 @@ mask_tf = transforms.Compose(
     [transforms.ToTensor()])
 
 dataset_train = MaskDataset(args.mask_year, mode='train')
-dataset_val = MaskDataset(args.mask_year, mode='val')
+dataset_val = SpecificValDataset('11_1985')
 
 iterator_train = iter(data.DataLoader(dataset_train, 
     batch_size=args.batch_size, sampler=InfiniteSampler(len(dataset_train)),
