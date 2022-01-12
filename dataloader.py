@@ -163,9 +163,9 @@ class SpecificValDataset():
         gt = torch.from_numpy(gt[self.timestep, :, :])
 
         #bring into right shape   
-        mask = mask.repeat(3, 1, 1).unsqueeze(0)
-        im_new = im_new.repeat(3, 1, 1).unsqueeze(0)
-        gt = gt.repeat(3, 1, 1).unsqueeze(0)
+        mask = mask.repeat(3, 1, 1)
+        im_new = im_new.repeat(3, 1, 1)
+        gt = gt.repeat(3, 1, 1)
 
 
         return im_new, mask, gt
