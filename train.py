@@ -51,7 +51,11 @@ parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--mask_year', type=str, default='1970')
 parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--lr_finetune', type=float, default=5e-5)
+<<<<<<< HEAD
 parser.add_argument('--max_iter', type=int, default=2)
+=======
+parser.add_argument('--max_iter', type=int, default=400000)
+>>>>>>> 8c3ca9f1b497620e8a50a62f5c1bc67280297439
 parser.add_argument('--batch_size', type=int, default=4)
 parser.add_argument('--n_threads', type=int, default=4) 
 parser.add_argument('--save_model_interval', type=int, default=1)
@@ -134,6 +138,6 @@ for i in tqdm(range(start_iter, args.max_iter)):
     if (i + 1) % args.vis_interval == 0:
         model.eval()
         evaluate(model, dataset_val, device,
-                 '{:s}/images/test_{:d}'.format(args.save_dir, i + 1))
+                 '{:s}/images/part_1/test_{:d}'.format(args.save_dir, i + 1))
 
 writer.close()
