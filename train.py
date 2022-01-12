@@ -51,7 +51,6 @@ parser.add_argument('--device', type=str, default='cuda')
 parser.add_argument('--mask_year', type=str, default='1970')
 parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--lr_finetune', type=float, default=5e-5)
-parser.add_argument('--max_iter', type=int, default=2)
 parser.add_argument('--max_iter', type=int, default=400000)
 parser.add_argument('--batch_size', type=int, default=4)
 parser.add_argument('--n_threads', type=int, default=4) 
@@ -103,7 +102,7 @@ criterion = InpaintingLoss(VGG16FeatureExtractor())
 
 if args.resume_iter:
     start_iter = load_ckpt(
-        '{}/ckpt/{}.pth'.format(args.save_dir, args.resume_iter), [('model', model)], args.device, [('optimizer', optimizer)])
+        '{}/ckpt/{}.pth'.format(args.save_dir, args.resume_iter), [('model', model)], [('optimizer', optimizer)])
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     print('Starting from iter ', start_iter)
