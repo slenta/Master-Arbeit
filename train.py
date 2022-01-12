@@ -82,7 +82,7 @@ mask_tf = transforms.Compose(
     [transforms.ToTensor()])
 
 dataset_train = MaskDataset(args.mask_year, mode='train')
-dataset_val = SpecificValDataset('11_1985')
+dataset_val = SpecificValDataset(323, '11_1985')
 
 iterator_train = iter(data.DataLoader(dataset_train, 
     batch_size=args.batch_size, sampler=InfiniteSampler(len(dataset_train)),
