@@ -18,6 +18,7 @@ def evaluate(model, dataset, device, filename):
     image = torch.as_tensor(image)
     mask = torch.as_tensor(mask)
     gt = torch.as_tensor(gt)
+    print(image.shape, mask.shape, gt.shape)
     with torch.no_grad():
         output, _ = model(image.to(device), mask.to(device))
     output = output.to(torch.device('cpu'))
