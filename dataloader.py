@@ -24,6 +24,7 @@ def preprocessing(path, name, year, type, plot):
     #extract the variables from the file
     if type == 'mask':
         sst = ds.tho.values[0, :, :]
+	print(sst.shape)
         n = sst.shape
         
         for i in range(n[0]):
@@ -45,7 +46,7 @@ def preprocessing(path, name, year, type, plot):
         f.close()
 
     if type == 'image':
-        sst = ds.tos.values
+        sst = ds.tho.values[0, :, :]
         x = np.isnan(sst)
         n = sst.shape
         sst[x] = 0
