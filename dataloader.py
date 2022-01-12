@@ -159,7 +159,7 @@ class SpecificValDataset():
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(image[:, :, :])
-        mask = torch.from_numpy(mask_data[:, :, :])
+        mask = torch.from_numpy(mask_data[index, :, :])
         gt = torch.from_numpy(gt[self.timestep, :, :])
 
         #bring into right shape   
@@ -174,8 +174,7 @@ class SpecificValDataset():
 
 #create dataset
 dataset = SpecificValDataset(323, '11_1985')
-print(dataset)
+
 #get sample and unpack
-masked_image, mask, image = dataset[0]
-print(image.shape)
+image, mask, gt = dataset[0]
 
