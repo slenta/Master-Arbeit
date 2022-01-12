@@ -6,7 +6,7 @@
 #SBATCH -n 1
 #SBATCH --cpus-per-task=64
 #SBATCH --nodelist=mg207
-#SBATCH --time=8:00:00
+#SBATCH --time=10:00:00
 #SBATCH --mem=32G
 
 module load cuda/10.0.130
