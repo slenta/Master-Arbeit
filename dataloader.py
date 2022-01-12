@@ -23,7 +23,7 @@ def preprocessing(path, name, year, type, plot):
 
     #extract the variables from the file
     if type == 'mask':
-        sst = ds.tho.values[0, :, :]
+        sst = ds.tho.values[:, 0, :, :]
         print(sst.shape)
         n = sst.shape
         
@@ -46,7 +46,7 @@ def preprocessing(path, name, year, type, plot):
         f.close()
 
     if type == 'image':
-        sst = ds.tho.values[0, :, :]
+        sst = ds.tho.values[:, 0, :, :]
         x = np.isnan(sst)
         n = sst.shape
         sst[x] = 0
@@ -136,8 +136,8 @@ class MaskDataset(Dataset):
 
 class SpecificValDataset():
     
-    def __init__(self, year, mode):
-        super(MaskDataset, self).__init__()
+    def __init__(self, year):
+        super(SpecificValDataset, self).__init__()
 
         self.image_path = '../Asi_maskiert/original_image/'
         self.mask_path = '../Asi_maskiert/original_masks/'
@@ -159,7 +159,7 @@ class SpecificValDataset():
         im_new = torch.from_numpy(image[index, :, :])
         mask = torch.from_numpy(mask_data[index, :, :])
 
-        return image, mask, image
+        return im_new, mask, image
 
 
 
