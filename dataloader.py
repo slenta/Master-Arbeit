@@ -136,7 +136,7 @@ class MaskDataset(Dataset):
 
 class SpecificValDataset():
     
-    def __init__(self, year, timestep):
+    def __init__(self, timestep, year):
         super(SpecificValDataset, self).__init__()
 
         self.image_path = '../Asi_maskiert/original_image/'
