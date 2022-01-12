@@ -136,7 +136,7 @@ class MaskDataset(Dataset):
 
 class SpecificValDataset():
     
-    def __init__(self, year):
+    def __init__(self, year, timestep):
         super(SpecificValDataset, self).__init__()
 
         self.image_path = '../Asi_maskiert/original_image/'
@@ -144,22 +144,26 @@ class SpecificValDataset():
         self.image_name = 'Observation_'
         self.mask_name = 'Observation_'
         self.year = year
+        self.timestep = timestep
 
     def __getitem__(self, index):
 
         #get h5 file for image, mask, image plus mask and define relevant variables (tos)
         f_image = h5py.File(self.image_path + self.image_name + self.year + '.hdf5', 'r')
         f_mask = h5py.File(self.mask_path + self.mask_name + self.year + '.hdf5', 'r')
+        f_gt = h5py.File(self.image_path + 'Image_2020.hdf5', 'r')
 
         #extract sst data/mask data
         image = f_image.get('tos_sym')
         mask_data = f_mask.get('tos_sym')
+        gt = f_gt.get('tos_sym')
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(image[index, :, :])
         mask = torch.from_numpy(mask_data[index, :, :])
+        gt = torch.from_numpy(gt[self.timestep, :, :])
 
-        return im_new, mask, image
+        return im_new, mask, gt
 
 
 
