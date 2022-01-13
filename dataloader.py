@@ -37,7 +37,7 @@ def preprocessing(path, name, year, type, plot):
  
         rest = np.zeros((n[0], n[2] - n[1], n[2])) * 0
         sst_new = np.concatenate((sst, rest), axis=1)
-        sst_new = np.repeat(sst_new, 63, axis=0)
+        sst_new = np.repeat(sst_new, 4, axis=0)
         n = sst_new.shape
         #create new h5 file with symmetric ssts
         f = h5py.File(path + name + year + '.hdf5', 'w')
@@ -68,9 +68,7 @@ def preprocessing(path, name, year, type, plot):
         plt.show()
         
 
-
-#preprocessing('../Asi_maskiert/masked_images/', 'tos_r8_mask_en4_2004', type='image', plot=True)
-#preprocessing('../Asi_maskiert/original_masks/', 'Observation_', '11_1985', type='mask', plot = False)
+preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '1970_1985', type='mask', plot = False)
 #preprocessing('../Asi_maskiert/original_image/', 'Observation_', '11_1985', type='image', plot=False)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_image', type='image', plot=True)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_masks', type='mask', plot=True)
@@ -86,7 +84,6 @@ class MaskDataset(Dataset):
         self.image_name = 'Image_'
         self.mask_name = 'Maske_'
         self.image_year = '2020'
-        self.masked_images_name = 'tos_r8_mask_en4_'
         self.year = year
         self.mode = mode
 
@@ -171,10 +168,4 @@ class SpecificValDataset():
         return im_new, mask, gt
 
 
-
-#create dataset
-dataset = SpecificValDataset(323, '11_1985')
-
-#get sample and unpack
-image, mask, gt = dataset[0]
 
