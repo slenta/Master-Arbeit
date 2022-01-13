@@ -59,7 +59,7 @@ parser.add_argument('--save_model_interval', type=int, default=50000)
 parser.add_argument('--vis_interval', type=int, default=50000)
 parser.add_argument('--log_interval', type=int, default=50000)
 parser.add_argument('--image_size', type=int, default=256)
-parser.add_argument('--resume_iter', type=str, default=400000)
+parser.add_argument('--resume_iter', type=str)
 parser.add_argument('--finetune', action='store_true')
 args = parser.parse_args()
 
