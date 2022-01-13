@@ -49,7 +49,7 @@ parser.add_argument('--mask_root', type=str, default='../Asi_maskiert/masked_ima
 parser.add_argument('--save_dir', type=str, default='../Asi_maskiert/results/')
 parser.add_argument('--log_dir', type=str, default='./logs/default')
 parser.add_argument('--device', type=str, default='cuda')
-parser.add_argument('--mask_year', type=str, default='1970')
+parser.add_argument('--mask_year', type=str, default='1970_1985')
 parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--lr_finetune', type=float, default=5e-5)
 parser.add_argument('--max_iter', type=int, default=800000)
