@@ -10,7 +10,7 @@ from dataloader import MaskDataset
 
 def visualisation(iter):
     
-    f = h5py.File('../Asi_maskiert/results/images/Maske_1970/part_2/test_' + iter + '.hdf5', 'r')
+    f = h5py.File('../Asi_maskiert/results/images/part_3/test_' + iter + '.hdf5', 'r')
 
     image_data = f.get('image')[2, :, :]
     mask_data = f.get('mask')[2, :, :]
@@ -33,7 +33,7 @@ def visualisation(iter):
     plt.subplot(1, 4, 4)
     plt.title('Error')
     im5 = plt.imshow(image - output, vmin=-0.5, vmax=0.75, cmap='jet', aspect='auto')
-    plt.savefig('../Asi_maskiert/results/images/Maske_1970/part_2/test_' + iter + '.pdf')
+    plt.savefig('../Asi_maskiert/results/images/part_3/test_' + iter + '.pdf')
     plt.show()
 
 visualisation('350000')
