@@ -133,6 +133,6 @@ for i in tqdm(range(start_iter, args.max_iter)):
     if (i + 1) % args.vis_interval == 0:
         model.eval()
         evaluate(model, dataset_val, device,
-                 '{:s}/images/part_3/test_{:d}'.format(args.save_dir, i + 1))
+                 '{:s}/images/part_1/test_{:d}'.format(args.save_dir, i + 1))
 
 writer.close()
