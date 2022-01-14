@@ -36,7 +36,7 @@ def preprocessing(path, name, year, type, plot):
  
         rest = np.zeros((n[0], n[2] - n[1], n[2])) * 0
         sst_new = np.concatenate((sst, rest), axis=1)
-        sst_new = np.repeat(sst_new, 4, axis=0)
+        sst_new = np.concatenate((sst_new, sst_new, sst_new, sst_new), axis=0)
         n = sst_new.shape
         #create new h5 file with symmetric ssts
         f = h5py.File(path + name + year + '.hdf5', 'w')
