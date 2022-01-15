@@ -67,7 +67,7 @@ def preprocessing(path, name, year, type, plot):
         plt.show()
         
 
-preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '1970_1985', type='mask', plot = False)
+#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '1970_1985', type='mask', plot = False)
 #preprocessing('../Asi_maskiert/original_image/', 'Observation_', '11_1985', type='image', plot=False)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_image', type='image', plot=True)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_masks', type='mask', plot=True)
