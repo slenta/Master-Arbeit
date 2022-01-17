@@ -46,6 +46,7 @@ parser = argparse.ArgumentParser()
 # training options
 parser.add_argument('--root', type=str, default='/')
 parser.add_argument('--mask_root', type=str, default='../Asi_maskiert/masked_images/')
+parser.add_argument('--save_part', type=str, default='part_1')
 parser.add_argument('--save_dir', type=str, default='../Asi_maskiert/results/')
 parser.add_argument('--log_dir', type=str, default='./logs/default')
 parser.add_argument('--device', type=str, default='cuda')
@@ -59,7 +60,7 @@ parser.add_argument('--save_model_interval', type=int, default=50000)
 parser.add_argument('--vis_interval', type=int, default=50000)
 parser.add_argument('--log_interval', type=int, default=50000)
 parser.add_argument('--image_size', type=int, default=256)
-parser.add_argument('--resume_iter', type=str, default=350000)
+parser.add_argument('--resume_iter', type=str)
 parser.add_argument('--finetune', action='store_true')
 args = parser.parse_args()
 
@@ -133,6 +134,6 @@ for i in tqdm(range(start_iter, args.max_iter)):
     if (i + 1) % args.vis_interval == 0:
         model.eval()
         evaluate(model, dataset_val, device,
-                 '{:s}/images/part_1/test_{:d}'.format(args.save_dir, i + 1))
+                 '{:s}/images/{:d}/test_{:f}'.format(args.save_dir, args.save_part, i + 1))
 
 writer.close()
