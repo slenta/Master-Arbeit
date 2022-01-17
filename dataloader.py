@@ -168,3 +168,5 @@ class SpecificValDataset():
 
 
 
+#dataset1 = MaskDataset('2020', mode='train')
+#mi, m, i = dataset1[0]
