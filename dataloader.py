@@ -44,18 +44,17 @@ def preprocessing(path, name, year, type, plot):
         f.close()
 
     if type == 'image':
-        sst = ds.tho.values[:, 0, :, :]
+        sst = ds.thetao.values
         x = np.isnan(sst)
         n = sst.shape
         sst[x] = 0
-        print(sst.shape)
-        #print(np.any(np.isnan(sst)))
-        rest = np.ones((n[0], n[2] - n[1], n[2])) * 0
+
+        rest = np.zeros((n[0], n[1], n[3] - n[2], n[3]))
         sst_new = np.concatenate((sst, rest), axis=1)
          
         #create new h5 file with symmetric ssts
         f = h5py.File(path + name + year + '.hdf5', 'w')
-        dset1 = f.create_dataset('tos_sym', (n[0], n[2], n[2]), dtype = 'float32',data = sst_new)
+        dset1 = f.create_dataset('tos_sym', (n[0], n[1], n[3], n[3]), dtype = 'float32',data = sst_new)
         f.close()
 
     #plot ssts in 2d plot
