@@ -44,17 +44,17 @@ def preprocessing(path, name, year, type, plot):
         f.close()
 
     if type == 'image':
-        sst = ds.thetao.values
+        sst = ds.thetao.values[:, 0, :, :]
         x = np.isnan(sst)
         n = sst.shape
         sst[x] = 0
 
-        rest = np.zeros((n[0], n[1], n[3] - n[2], n[3]))
-        sst_new = np.concatenate((sst, rest), axis=2)
+        rest = np.zeros((n[0], n[2] - n[1], n[2]))
+        sst_new = np.concatenate((sst, rest), axis=1)
          
         #create new h5 file with symmetric ssts
         f = h5py.File(path + name + year + '.hdf5', 'w')
-        dset1 = f.create_dataset('tos_sym', (n[0], n[1], n[3], n[3]), dtype = 'float32',data = sst_new)
+        dset1 = f.create_dataset('tos_sym', (n[0], n[2], n[2]), dtype = 'float32',data = sst_new)
         f.close()
 
     #plot ssts in 2d plot
@@ -66,8 +66,8 @@ def preprocessing(path, name, year, type, plot):
         plt.show()
         
 
-#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '1970_1985', type='mask', plot = False)
-preprocessing('../Asi_maskiert/original_image/', 'Image_3d_1958_', '2020', type='image', plot=False)
+#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '2001_2020', type='mask', plot = False)
+#preprocessing('../Asi_maskiert/original_image/', 'Image_tho_r8_', '16', type='image', plot=False)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_image', type='image', plot=True)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_masks', type='mask', plot=True)
 
@@ -81,7 +81,7 @@ class MaskDataset(Dataset):
         self.mask_path = '../Asi_maskiert/original_masks/'
         self.image_name = 'Image_'
         self.mask_name = 'Maske_'
-        self.image_year = '2020'
+        self.image_year = 'tho_r8_16'
         self.year = year
         self.mode = mode
 
