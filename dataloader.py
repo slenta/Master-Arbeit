@@ -108,7 +108,7 @@ class MaskDataset(Dataset):
                     im_new.append(image[i])
 
         im_new = np.array(im_new)
-        im_new = np.random.shuffle(im_new)
+        np.random.shuffle(im_new)
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(im_new[index, :, :])
@@ -168,5 +168,5 @@ class SpecificValDataset():
 
 
 
-#dataset1 = MaskDataset('2020', mode='train')
-#mi, m, i = dataset1[0]
+dataset1 = MaskDataset('2020', mode='train')
+mi, m, i = dataset1[0]
