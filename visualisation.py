@@ -13,9 +13,9 @@ def visualisation(iter):
     fm = h5py.File('../Asi_maskiert/original_masks/Kontinentmaske.hdf5', 'r')
     
     continent_mask = fm.get('tos_sym')
-    image_data = f.get('image')[7, 2, :, :]
-    mask_data = f.get('mask')[7, 2,:, :]
-    output_data = f.get('output')[7, 2,:, :] * continent_mask
+    image_data = f.get('image')[3, 2, :, :]
+    mask_data = f.get('mask')[3, 2,:, :]
+    output_data = f.get('output')[3, 2,:, :] * continent_mask
 
     mask = torch.from_numpy(mask_data)
     output = torch.from_numpy(output_data)

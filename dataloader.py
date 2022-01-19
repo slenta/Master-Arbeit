@@ -1,4 +1,4 @@
-from matplotlib.pyplot import plot
+from matplotlib.pyplot import axis, plot
 import pylab as plt
 import numpy as np
 import netCDF4 as nc
@@ -66,7 +66,7 @@ def preprocessing(path, name, year, type, plot):
         plt.show()
         
 
-#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '2001_2020', type='mask', plot = False)
+#preprocessing('../Asi_maskiert/original_masks/', 'Observation_', '11_1985', type='mask', plot = False)
 #preprocessing('../Asi_maskiert/original_image/', 'Image_tho_r8_', '16', type='image', plot=False)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_image', type='image', plot=True)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_masks', type='mask', plot=True)
@@ -108,7 +108,7 @@ class MaskDataset(Dataset):
                     im_new.append(image[i])
 
         im_new = np.array(im_new)
-        #np.random.shuffle(im_new)
+        np.random.shuffle(im_new)
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(im_new[index, :, :])
@@ -150,13 +150,19 @@ class SpecificValDataset():
 
         #extract sst data/mask data
         image = f_image.get('tos_sym')
-        mask_data = f_mask.get('tos_sym')
-        gt = f_gt.get('tos_sym')
+        mask = f_mask.get('tos_sym')
+        gt = f_gt.get('tos_sym')[self.timestep, :, :]
+
+        #repeat to insert time dimension
+        image = np.repeat(image, 16, axis=0)
+        mask = np.repeat(mask, 16, axis=0)
+        gt = np.expand_dims(gt, axis=0)
+        gt = np.repeat(gt, 16, axis=0)
 
         #convert to pytorch tensors
-        im_new = torch.from_numpy(image[:, :, :])
-        mask = torch.from_numpy(mask_data[index, :, :])
-        gt = torch.from_numpy(gt[self.timestep, :, :])
+        im_new = torch.from_numpy(image[index, :, :])
+        mask = torch.from_numpy(mask[index, :, :])
+        gt = torch.from_numpy(gt[index, :, :])
 
         #bring into right shape   
         mask = mask.repeat(3, 1, 1)
@@ -168,5 +174,5 @@ class SpecificValDataset():
 
 
 
-dataset1 = MaskDataset('2020', mode='train')
+dataset1 = SpecificValDataset(12*27 + 11, '11_1985')
 mi, m, i = dataset1[0]
