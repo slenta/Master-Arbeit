@@ -108,7 +108,7 @@ class MaskDataset(Dataset):
                     im_new.append(image[i])
 
         im_new = np.array(im_new)
-        np.random.shuffle(im_new)
+        #np.random.shuffle(im_new)
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(im_new[index, :, :])
