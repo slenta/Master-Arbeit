@@ -74,14 +74,14 @@ def preprocessing(path, name, year, type, plot):
 
 class MaskDataset(Dataset):
 
-    def __init__(self, year, mode):
+    def __init__(self, year, im_year, mode):
         super(MaskDataset, self).__init__()
 
         self.image_path = '../Asi_maskiert/original_image/'
         self.mask_path = '../Asi_maskiert/original_masks/'
         self.image_name = 'Image_'
         self.mask_name = 'Maske_'
-        self.image_year = 'tho_r8_16'
+        self.image_year = im_year
         self.year = year
         self.mode = mode
 

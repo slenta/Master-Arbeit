@@ -50,7 +50,8 @@ parser.add_argument('--save_part', type=str, default='part_1')
 parser.add_argument('--save_dir', type=str, default='../Asi_maskiert/results/')
 parser.add_argument('--log_dir', type=str, default='./logs/default')
 parser.add_argument('--device', type=str, default='cuda')
-parser.add_argument('--mask_year', type=str, default='tho_r8_16')
+parser.add_argument('--mask_year', type=str, default='2020')
+parser.add_argument('--im_year', type=str, default='tho_r8_12')
 parser.add_argument('--lr', type=float, default=2e-4)
 parser.add_argument('--lr_finetune', type=float, default=5e-5)
 parser.add_argument('--max_iter', type=int, default=800000)
@@ -82,8 +83,8 @@ img_tf = transforms.Compose(
 mask_tf = transforms.Compose(
     [transforms.ToTensor()])
 
-dataset_train = MaskDataset(args.mask_year, mode='train')
-dataset_val = MaskDataset(args.mask_year, mode='val')
+dataset_train = MaskDataset(args.mask_year, args.im_year, mode='train')
+dataset_val = MaskDataset(args.mask_year, args.im_year, mode='val')
 
 iterator_train = iter(data.DataLoader(dataset_train, 
     batch_size=args.batch_size, sampler=InfiniteSampler(len(dataset_train)),
