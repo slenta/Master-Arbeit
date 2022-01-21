@@ -93,22 +93,35 @@ class MaskDataset(Dataset):
 
         #extract sst data/mask data
         image = f_image.get('tos_sym')
-        mask_data = f_mask.get('tos_sym')
+        mask = f_mask.get('tos_sym')
 
         n = image.shape
+        m = mask.shape
+        
+        for i in range(n[0]):
+            if m[0] < n[0]:
+                np.repeat(mask, 2, axis=0)
+            else:
+                break
+
         im_new = []
+        mask_new = []
 
         if self.mode == 'train':
             for i in range(n[0]):
                 if i%5 >= 1:
                     im_new.append(image[i])
+                    mask_new.append(mask[i])
         elif self.mode == 'val':
             for i in range(n[0]):
                 if i%5 == 0:
                     im_new.append(image[i])
+                    mask_new.append(mask[i])
 
+        mask_new = np.array(mask_new)
         im_new = np.array(im_new)
         np.random.shuffle(im_new)
+        #np.random.shuffle(mask_new)
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(im_new[index, :, :])

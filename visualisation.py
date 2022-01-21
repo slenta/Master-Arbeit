@@ -9,13 +9,13 @@ import torch
 
 def visualisation(iter):
     
-    f = h5py.File('../Asi_maskiert/results/images/part_2/test_' + iter + '.hdf5', 'r')
+    f = h5py.File('../Asi_maskiert/results/images/part_1/test_' + iter + '.hdf5', 'r')
     fm = h5py.File('../Asi_maskiert/original_masks/Kontinentmaske.hdf5', 'r')
     
     continent_mask = fm.get('tos_sym')
-    image_data = f.get('image')[2, 2, :, :]
-    mask_data = f.get('mask')[2, 2,:, :]
-    output_data = f.get('output')[2, 2,:, :] * continent_mask
+    image_data = f.get('image')[15, 2, :, :]
+    mask_data = f.get('mask')[15, 2,:, :]
+    output_data = f.get('output')[15, 2,:, :] * continent_mask
 
     mask = torch.from_numpy(mask_data)
     output = torch.from_numpy(output_data)
