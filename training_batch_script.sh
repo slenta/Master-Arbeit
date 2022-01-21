@@ -14,5 +14,5 @@ module load singularity/3.6.1-gcc-9.1.0
 
 singularity exec --bind /work/uo1075/u301617/ --nv /work/uo1075/u301617/Master-Arbeit/pytorch_gpu_new.sif \
  python train.py
- 
+ --save_part 'part_2' --mask_year '2020' --image_year 'r8_12'
 
