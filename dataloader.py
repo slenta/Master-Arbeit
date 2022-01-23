@@ -121,11 +121,11 @@ class MaskDataset(Dataset):
         mask_new = np.array(mask_new)
         im_new = np.array(im_new)
         np.random.shuffle(im_new)
-        #np.random.shuffle(mask_new)
+        np.random.shuffle(mask_new)
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(im_new[index, :, :])
-        mask = torch.from_numpy(mask_data[index, :, :])
+        mask = torch.from_numpy(mask_new[index, :, :])
 
         #Repeat to fit input channels
         mask = mask.repeat(3, 1, 1)
