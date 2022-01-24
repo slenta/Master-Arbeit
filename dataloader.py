@@ -98,11 +98,11 @@ class MaskDataset(Dataset):
         n = image.shape
         m = mask.shape
         
-        for i in range(n[0]):
-            if m[0] < n[0]:
-                np.repeat(mask, 2, axis=0)
-            else:
-                break
+        #for i in range(n[0]):
+        #    if m[0] < n[0]:
+        #        np.repeat(mask, 2, axis=0)
+        #    else:
+        #        break
 
         im_new = []
         mask_new = []
