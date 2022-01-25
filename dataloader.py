@@ -36,7 +36,6 @@ def preprocessing(path, name, year, type, plot):
  
         rest = np.zeros((n[0], n[2] - n[1], n[2])) * 0
         sst_new = np.concatenate((sst, rest), axis=1)
-        sst_new = np.concatenate((sst_new, sst_new, sst_new, sst_new), axis=0)
         n = sst_new.shape
         #create new h5 file with symmetric ssts
         f = h5py.File(path + name + year + '.hdf5', 'w')
@@ -187,5 +186,14 @@ class SpecificValDataset():
 
 
 
-dataset1 = SpecificValDataset(12*27 + 11, '11_1985')
-mi, m, i = dataset1[0]
+#dataset1 = SpecificValDataset(12*27 + 11, '11_1985')
+#mi, m, i = dataset1[0]
+
+dataset1 = MaskDataset('2004_2020', '2020', 'val')
+mi, m, i, = dataset1[3]
+
+
+f_mask = h5py.File('../Asi_maskiert/original_masks/Maske_2004_2020.hdf5', 'r')
+mask = f_mask.get('tos_sym')
+
+print(mask)
