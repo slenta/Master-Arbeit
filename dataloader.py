@@ -96,7 +96,7 @@ class MaskDataset(Dataset):
         mask = f_mask.get('tos_sym')
 
         n = image.shape
-        m = mask.shape
+        #m = mask.shape
         
         #for i in range(n[0]):
         #    if m[0] < n[0]:
@@ -105,27 +105,27 @@ class MaskDataset(Dataset):
         #        break
 
         im_new = []
-        mask_new = []
+        #mask_new = []
 
         if self.mode == 'train':
             for i in range(n[0]):
                 if i%5 >= 1:
                     im_new.append(image[i])
-                    mask_new.append(mask[i])
+                    #mask_new.append(mask[i])
         elif self.mode == 'val':
             for i in range(n[0]):
                 if i%5 == 0:
                     im_new.append(image[i])
-                    mask_new.append(mask[i])
+                    #mask_new.append(mask[i])
 
-        mask_new = np.array(mask_new)
+        #mask_new = np.array(mask_new)
         im_new = np.array(im_new)
         np.random.shuffle(im_new)
-        np.random.shuffle(mask_new)
+        #np.random.shuffle(mask)
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(im_new[index, :, :])
-        mask = torch.from_numpy(mask_new[index, :, :])
+        mask = torch.from_numpy(mask[index, :, :])
 
         #Repeat to fit input channels
         mask = mask.repeat(3, 1, 1)
