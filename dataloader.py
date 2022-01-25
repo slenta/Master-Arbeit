@@ -193,7 +193,5 @@ dataset1 = MaskDataset('2004_2020', '2020', 'val')
 mi, m, i, = dataset1[3]
 
 
-f_mask = h5py.File('../Asi_maskiert/original_masks/Maske_2004_2020.hdf5', 'r')
-mask = f_mask.get('tos_sym')
-
-print(mask)
+#f_mask = h5py.File('../Asi_maskiert/original_masks/Maske_2004_2020.hdf5', 'r')
+#mask = f_mask.get('tos_sym')
