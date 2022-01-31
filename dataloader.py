@@ -65,11 +65,11 @@ def preprocessing(path, name, year, type, plot):
         plt.show()
         
 
-preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '2004_2020', type='mask', plot = False)
-preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '1970_1985', type='mask', plot = False)
-preprocessing('../Asi_maskiert/original_masks/', 'Observation_', '2001_2020', type='mask', plot = False)
+#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '2004_2020', type='mask', plot = False)
+#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '1970_1985', type='mask', plot = False)
+#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '2001_2020', type='mask', plot = False)
 
-#preprocessing('../Asi_maskiert/original_image/', 'Image_tho_r8_', '16', type='image', plot=False)
+preprocessing('../Asi_maskiert/original_image/', 'Image_', '2020_newgrid', type='image', plot=False)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_image', type='image', plot=True)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_masks', type='mask', plot=True)
 
@@ -122,7 +122,7 @@ class MaskDataset(Dataset):
 
         #mask_new = np.array(mask_new)
         im_new = np.array(im_new)
-        np.random.shuffle(im_new)
+        #np.random.shuffle(im_new)
         #np.random.shuffle(mask)
 
         #convert to pytorch tensors
@@ -192,8 +192,8 @@ class SpecificValDataset():
 #dataset1 = SpecificValDataset(12*27 + 11, '11_1985')
 #mi, m, i = dataset1[0]
 
-dataset1 = MaskDataset('2004_2020', '2020', 'val')
-mi, m, i, = dataset1[3]
+#dataset1 = MaskDataset('2004_2020', '2020', 'val')
+#mi, m, i, = dataset1[3]
 
 
 #f_mask = h5py.File('../Asi_maskiert/original_masks/Maske_2004_2020.hdf5', 'r')
