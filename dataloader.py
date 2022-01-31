@@ -96,6 +96,7 @@ class MaskDataset(Dataset):
         #extract sst data/mask data
         image = f_image.get('tos_sym')
         mask = f_mask.get('tos_sym')
+        mask = np.repeat(mask, 100, axis=0)
 
         n = image.shape
         m = mask.shape
@@ -183,8 +184,8 @@ class SpecificValDataset():
 #dataset1 = SpecificValDataset(12*27 + 11, '11_1985')
 #mi, m, i = dataset1[0]
 
-#dataset1 = MaskDataset('2004_2020', '2020', 'val')
-#mi, m, i, = dataset1[3]
+dataset1 = MaskDataset('2004_2020', '2020', 'val')
+mi, m, i, = dataset1[3]
 
 
 #f_mask = h5py.File('../Asi_maskiert/original_masks/Maske_2004_2020.hdf5', 'r')
