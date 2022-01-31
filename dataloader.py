@@ -69,15 +69,7 @@ def preprocessing(path, name, year, type, plot):
         plt.show()
         
 
-#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '2004_2020', type='mask', plot = False)
-#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '1970_1985', type='mask', plot = False)
-<<<<<<< HEAD
-#preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '2001_2020', type='mask', plot = False)
-=======
-#preprocessing('../Asi_maskiert/original_masks/', 'Observation_', '2001_2020', type='mask', plot = False)
->>>>>>> 56f0eec0041288570eaee1a217d7a83165681c52
-
-preprocessing('../Asi_maskiert/original_image/', 'Image_', '2020_newgrid', type='image', plot=False)
+#preprocessing('../Asi_maskiert/original_image/', 'Image_', '2020_newgrid', type='image', plot=False)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_image', type='image', plot=True)
 #preprocessing('../Asi_maskiert/Chris_Daten/', 'Chris_masks', type='mask', plot=True)
 
@@ -115,18 +107,14 @@ class MaskDataset(Dataset):
                 if i%5 >= 1:
                     im_new.append(image[i])
         elif self.mode == 'val':
+            mask = mask[:16, :, :]
             for i in range(n[0]):
                 if i%5 == 0:
                     im_new.append(image[i])
 
         im_new = np.array(im_new)
-<<<<<<< HEAD
         #np.random.shuffle(im_new)
         #np.random.shuffle(mask)
-=======
-        np.random.shuffle(im_new)
-        np.random.shuffle(mask)
->>>>>>> 56f0eec0041288570eaee1a217d7a83165681c52
 
         #convert to pytorch tensors
         im_new = torch.from_numpy(im_new[index, :, :])
@@ -195,18 +183,9 @@ class SpecificValDataset():
 #dataset1 = SpecificValDataset(12*27 + 11, '11_1985')
 #mi, m, i = dataset1[0]
 
-<<<<<<< HEAD
 #dataset1 = MaskDataset('2004_2020', '2020', 'val')
 #mi, m, i, = dataset1[3]
 
 
 #f_mask = h5py.File('../Asi_maskiert/original_masks/Maske_2004_2020.hdf5', 'r')
 #mask = f_mask.get('tos_sym')
-=======
-dataset1 = MaskDataset('1970_1985', '2020', 'val')
-image, mask, gt = zip(*[dataset1[i] for i in range(16)])
-mask = torch.as_tensor(torch.stack(mask))
-filename = '../Asi_maskiert/original_masks/Maske_1970_1985'
-grid = make_grid(unnormalize(mask))
-save_image(grid, filename + '.jpg')
->>>>>>> 56f0eec0041288570eaee1a217d7a83165681c52
