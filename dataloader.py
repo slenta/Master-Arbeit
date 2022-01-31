@@ -42,7 +42,7 @@ def preprocessing(new_im_size, path, name, year, type, plot):
         sst = np.concatenate((sst, rest), axis=1)
         n = sst.shape
         rest2 = np.zeros((n[0], n[1], new_im_size - n[2]))
-        sst_new = np.concatenate((sst, rest2), axis=1)
+        sst_new = np.concatenate((sst, rest2), axis=2)
 
         n = sst_new.shape
         #create new h5 file with symmetric ssts
@@ -60,8 +60,8 @@ def preprocessing(new_im_size, path, name, year, type, plot):
         sst = np.concatenate((sst, rest), axis=1)
         n = sst.shape
         rest2 = np.zeros((n[0], n[1], new_im_size - n[2]))
-        sst_new = np.concatenate((sst, rest2), axis=1)
-         
+        sst_new = np.concatenate((sst, rest2), axis=2)
+        n = sst_new.shape 
         #create new h5 file with symmetric ssts
         f = h5py.File(path + name + year + '.hdf5', 'w')
         dset1 = f.create_dataset('tos_sym', (n[0], n[2], n[2]), dtype = 'float32',data = sst_new)
@@ -75,8 +75,8 @@ def preprocessing(new_im_size, path, name, year, type, plot):
         plt.savefig('../Asi_maskiert/pdfs/' + name + '.pdf')
         plt.show()
         
-preprocessing('../Asi_maskiert/original_masks/', 'Maske_', '2020_newgrid', type='mask', plot=False)
-preprocessing('../Asi_maskiert/original_image/', 'Image_', '2020_newgrid', type='image', plot=False)
+#preprocessing(128, '../Asi_maskiert/original_masks/', 'Maske_', '2001_2020_newgrid', type='mask', plot=False)
+#preprocessing(128, '../Asi_maskiert/original_image/', 'Image_', 'r10_11_newgrid', type='image', plot=False)
 
 
 
