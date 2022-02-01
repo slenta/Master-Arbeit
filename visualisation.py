@@ -9,13 +9,13 @@ import torch
 
 def visualisation(iter):
     
-    f = h5py.File('../Asi_maskiert/results/images/r8_newgrid/test_' + iter + '.hdf5', 'r')
+    f = h5py.File('../Asi_maskiert/results/images/r1011_shuffle_newgrid/test_' + iter + '.hdf5', 'r')
     fm = h5py.File('../Asi_maskiert/original_masks/Kontinentmaske.hdf5', 'r')
     
     continent_mask = fm.get('tos_sym')
-    image_data = f.get('image')[15, 2, :, :]
-    mask_data = f.get('mask')[15, 2,:, :]
-    output_data = f.get('output')[15, 2,:, :]
+    image_data = f.get('image')[0, 2, :, :]
+    mask_data = f.get('mask')[0, 2,:, :]
+    output_data = f.get('output')[0, 2,:, :]
 
     mask = torch.from_numpy(mask_data)
     output = torch.from_numpy(output_data)
@@ -40,4 +40,4 @@ def visualisation(iter):
     #plt.savefig('../Asi_maskiert/results/images/part_1/test_' + iter + '.pdf')
     plt.show()
 
-visualisation('600000')
+visualisation('350000')

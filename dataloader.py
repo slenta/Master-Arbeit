@@ -118,6 +118,7 @@ class MaskDataset(Dataset):
             for i in range(n[0]):
                 if i%5 == 0:
                     im_new.append(image[i])
+                im_new = im_new[:16]
 
         im_new = np.array(im_new)
         np.random.shuffle(im_new)
