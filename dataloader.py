@@ -114,11 +114,11 @@ class MaskDataset(Dataset):
                 if i%5 >= 1:
                     im_new.append(image[i])
         elif self.mode == 'val':
-            mask = mask[:16, :, :]
+            mask = mask[:8, :, :]
             for i in range(n[0]):
                 if i%5 == 0:
                     im_new.append(image[i])
-                im_new = im_new[:16]
+            im_new = im_new[:8]
 
         im_new = np.array(im_new)
         np.random.shuffle(im_new)
