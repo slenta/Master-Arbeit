@@ -102,7 +102,7 @@ class MaskDataset(Dataset):
         #extract sst data/mask data
         image = f_image.get('tos_sym')
         mask = f_mask.get('tos_sym')
-        mask = np.repeat(mask, 100, axis=0)
+        mask = np.repeat(mask, 5, axis=0)
 
         n = image.shape
         m = mask.shape
