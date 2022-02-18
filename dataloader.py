@@ -82,7 +82,7 @@ def preprocessing(new_im_size, path, name, year, type, plot):
 
 class MaskDataset(Dataset):
 
-    def __init__(self, in_channels, year, im_year, mode):
+    def __init__(self, depth, in_channels, year, im_year, mode):
         super(MaskDataset, self).__init__()
 
         self.image_path = '../Asi_maskiert/original_image/'
@@ -93,6 +93,7 @@ class MaskDataset(Dataset):
         self.year = year
         self.mode = mode
         self.in_channels = in_channels
+        self.depth = depth
 
     def __getitem__(self, index):
 
@@ -126,12 +127,15 @@ class MaskDataset(Dataset):
         np.random.shuffle(mask)
 
         #convert to pytorch tensors
-        im_new = torch.from_numpy(im_new[index, :self.in_channels, :, :])
-        mask = torch.from_numpy(mask[index, :self.in_channels, :, :])
-
-        #Repeat to fit input channels
-        #mask = mask.repeat(3, 1, 1)
-        #im_new = im_new.repeat(3, 1, 1)
+        if self.depth==True:
+            im_new = torch.from_numpy(im_new[index, :self.in_channels, :, :])
+            mask = torch.from_numpy(mask[index, :self.in_channels, :, :])
+        elif self.depth ==False:
+            mask = torch.from_numpy(mask[index, 0, :, :])
+            im_new = torch.from_numpy(im_new[index, 0, :, :])
+            #Repeat to fit input channels
+            mask = mask.repeat(3, 1, 1)
+            im_new = im_new.repeat(3, 1, 1)
 
         return mask*im_new, mask, im_new
 
