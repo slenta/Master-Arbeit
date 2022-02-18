@@ -98,9 +98,11 @@ class preprocessing():
 
 
 
-dataset = preprocessing('original_masks/Maske_2020', 128, -65, -5, 20, 69,'mask')
-sst, n = dataset.__getitem__()
+dataset = preprocessing('original_masks/Maske_2001_2020', 128, -65, -5, 20, 69,'mask')
+dataset2 = preprocessing('original_image/Image_r8_12', 128, -65, -5, 20, 69,'image')
+#sst, n = dataset.__getitem__()
 #print(sst.shape)
-dataset.plot()
+#dataset.plot()
 dataset.save_data()
+dataset2.save_data()
 #print(sst.shape)
