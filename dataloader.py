@@ -131,8 +131,8 @@ class MaskDataset(Dataset):
             im_new = torch.from_numpy(im_new[index, :self.in_channels, :, :])
             mask = torch.from_numpy(mask[index, :self.in_channels, :, :])
         elif self.depth ==False:
-            mask = torch.from_numpy(mask[index, 0, :, :])
-            im_new = torch.from_numpy(im_new[index, 0, :, :])
+            mask = torch.from_numpy(mask[index, :, :])
+            im_new = torch.from_numpy(im_new[index, :, :])
             #Repeat to fit input channels
             mask = mask.repeat(3, 1, 1)
             im_new = im_new.repeat(3, 1, 1)
