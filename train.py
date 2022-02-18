@@ -62,7 +62,7 @@ parser.add_argument('--vis_interval', type=int, default=50000)
 parser.add_argument('--log_interval', type=int, default=50)
 parser.add_argument('--image_size', type=int, default=256)
 parser.add_argument('--in_channels', type=int, default=3)
-parser.add_argument('--depth', type=str, default=False)
+parser.add_argument('--depth', type='store_true')
 parser.add_argument('--resume_iter', type=str)
 parser.add_argument('--finetune', action='store_true')
 args = parser.parse_args()
@@ -85,8 +85,13 @@ img_tf = transforms.Compose(
 mask_tf = transforms.Compose(
     [transforms.ToTensor()])
 
-dataset_train = MaskDataset(args.depth, args.in_channels, args.mask_year, args.im_year, mode='train')
-dataset_val = MaskDataset(args.depth, args.in_channels, args.mask_year, args.im_year, mode='val')
+if args.depth:
+    depth = True
+else:
+    depth = False
+
+dataset_train = MaskDataset(depth, args.in_channels, args.mask_year, args.im_year, mode='train')
+dataset_val = MaskDataset(depth, args.in_channels, args.mask_year, args.im_year, mode='val')
 
 iterator_train = iter(data.DataLoader(dataset_train, 
     batch_size=args.batch_size, sampler=InfiniteSampler(len(dataset_train)),

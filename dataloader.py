@@ -137,6 +137,8 @@ class MaskDataset(Dataset):
             mask = mask.repeat(3, 1, 1)
             im_new = im_new.repeat(3, 1, 1)
 
+        n = im_new.shape
+        mask = mask[:n[0], :, :, :]
         return mask*im_new, mask, im_new
 
     def __len__(self):
