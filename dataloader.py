@@ -82,7 +82,7 @@ def preprocessing(new_im_size, path, name, year, type, plot):
 
 class MaskDataset(Dataset):
 
-    def __init__(self, year, im_year, mode):
+    def __init__(self, in_channels, year, im_year, mode):
         super(MaskDataset, self).__init__()
 
         self.image_path = '../Asi_maskiert/original_image/'
@@ -92,6 +92,7 @@ class MaskDataset(Dataset):
         self.image_year = im_year
         self.year = year
         self.mode = mode
+        self.in_channels = in_channels
 
     def __getitem__(self, index):
 
@@ -114,7 +115,7 @@ class MaskDataset(Dataset):
                 if i%5 >= 1:
                     im_new.append(image[i])
         elif self.mode == 'val':
-            mask = mask[:8, :, :]
+            mask = mask[:8]
             for i in range(n[0]):
                 if i%5 == 0:
                     im_new.append(image[i])
@@ -125,12 +126,12 @@ class MaskDataset(Dataset):
         np.random.shuffle(mask)
 
         #convert to pytorch tensors
-        im_new = torch.from_numpy(im_new[index, :, :])
-        mask = torch.from_numpy(mask[index, :, :])
+        im_new = torch.from_numpy(im_new[index, :self.in_channels, :, :])
+        mask = torch.from_numpy(mask[index, :self.in_channels, :, :])
 
         #Repeat to fit input channels
-        mask = mask.repeat(3, 1, 1)
-        im_new = im_new.repeat(3, 1, 1)
+        #mask = mask.repeat(3, 1, 1)
+        #im_new = im_new.repeat(3, 1, 1)
 
         return mask*im_new, mask, im_new
 
@@ -191,8 +192,9 @@ class SpecificValDataset():
 #dataset1 = SpecificValDataset(12*27 + 11, '11_1985')
 #mi, m, i = dataset1[0]
 
-#dataset1 = MaskDataset('2004_2020', '2020', 'val')
+#dataset1 = MaskDataset(7, '2020_newgrid', '3d_1958_2020_newgrid', 'train')
 #mi, m, i, = dataset1[3]
+#print(mi.shape, m.shape, i.shape)
 
 #f_mask = h5py.File('../Asi_maskiert/original_masks/Maske_2004_2020.hdf5', 'r')
 #mask = f_mask.get('tos_sym')
