@@ -31,7 +31,7 @@ class preprocessing():
         ifile = self.path + self.name + '.nc'
         ofile = self.path + self.name + '_newgrid.nc'
 
-        #cdo.sellonlatbox(self.lon1, self.lon2, self.lat1, self.lat2, input=ifile, output = ofile)
+        cdo.sellonlatbox(self.lon1, self.lon2, self.lat1, self.lat2, input=ifile, output = ofile)
 
         ds = xr.load_dataset(ofile, decode_times=False)
 
@@ -98,9 +98,9 @@ class preprocessing():
 
 
 
-dataset = preprocessing('original_image/Image_3d_1958_2020', 128, -65, -5, 20, 69,'image')
+dataset = preprocessing('original_masks/Maske_2020', 128, -65, -5, 20, 69,'mask')
 sst, n = dataset.__getitem__()
-print(sst.shape)
+#print(sst.shape)
 dataset.plot()
-#dataset.save_data()
+dataset.save_data()
 #print(sst.shape)

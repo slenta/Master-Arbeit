@@ -86,9 +86,9 @@ def visualisation(iter):
     fm = h5py.File('../Asi_maskiert/original_masks/Kontinentmaske.hdf5', 'r')
     
     continent_mask = fm.get('tos_sym')
-    image_data = f.get('image')[0, 2, :, :]
-    mask_data = f.get('mask')[0, 2,:, :]
-    output_data = f.get('output')[0, 2,:, :]
+    image_data = f.get('image')[6, 2, :, :]
+    mask_data = f.get('mask')[6, 2,:, :]
+    output_data = f.get('output')[6, 2,:, :]
 
     mask = torch.from_numpy(mask_data)
     output = torch.from_numpy(output_data)
@@ -113,7 +113,7 @@ def visualisation(iter):
     #plt.savefig('../Asi_maskiert/results/images/r1011_shuffle_newgrid/short_val/Maske_1970_1985/test_' + iter + '.pdf')
     plt.show()
 
-visualisation('500000')
+visualisation('700000')
 
 #vis_single(753, '../Asi_maskiert/original_image/', 'Image_3d_newgrid', 'Argo-era', '3d', 'North Atlantic Assimilation October 2020')
 #vis_single(9, '../Asi_maskiert/original_masks/', 'Maske_2020_newgrid', 'pre-Argo-era', '3d', 'North Atlantic Observations October 2020')
