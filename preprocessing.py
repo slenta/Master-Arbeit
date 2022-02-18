@@ -2,9 +2,7 @@
 from time import time
 import numpy as np
 import matplotlib.pylab as plt
-import cdo
 from sympy import N
-cdo = cdo.Cdo()
 import xarray as xr
 import config as cfg
 import h5py
@@ -13,17 +11,13 @@ import netCDF4
 
 class preprocessing():
     
-    def __init__(self, name, new_im_size, lon1, lon2, lat1, lat2, mode):
+    def __init__(self, name, new_im_size, mode):
         super(preprocessing, self).__init__()
 
         self.path = '../Asi_maskiert/'
         self.image_path = '../Asi_maskiert/pdfs/'
         self.name = name
         self.new_im_size = new_im_size
-        self.lon1 = lon1
-        self.lon2 = lon2
-        self.lat1 = lat1
-        self.lat2 = lat2
         self.mode = mode
 
     def __getitem__(self):
@@ -31,7 +25,7 @@ class preprocessing():
         ifile = self.path + self.name + '.nc'
         ofile = self.path + self.name + '_newgrid.nc'
 
-        cdo.sellonlatbox(self.lon1, self.lon2, self.lat1, self.lat2, input=ifile, output = ofile)
+        #cdo.sellonlatbox(self.lon1, self.lon2, self.lat1, self.lat2, input=ifile, output = ofile)
 
         ds = xr.load_dataset(ofile, decode_times=False)
 
@@ -98,8 +92,8 @@ class preprocessing():
 
 
 
-dataset = preprocessing('original_masks/Maske_2001_2020', 128, -65, -5, 20, 69,'mask')
-dataset2 = preprocessing('original_image/Image_r8_12', 128, -65, -5, 20, 69,'image')
+dataset = preprocessing('original_masks/Maske_2001_2020', 128, 'mask')
+dataset2 = preprocessing('original_image/Image_r8_12', 128, 'image')
 #sst, n = dataset.__getitem__()
 #print(sst.shape)
 #dataset.plot()
