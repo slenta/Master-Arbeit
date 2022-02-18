@@ -1,4 +1,5 @@
 
+from time import time
 import numpy as np
 import matplotlib.pylab as plt
 import cdo
@@ -7,6 +8,7 @@ cdo = cdo.Cdo()
 import xarray as xr
 import config as cfg
 import h5py
+import netCDF4
 
 
 class preprocessing():
@@ -29,9 +31,10 @@ class preprocessing():
         ifile = self.path + self.name + '.nc'
         ofile = self.path + self.name + '_newgrid.nc'
 
-        cdo.sellonlatbox(self.lon1, self.lon2, self.lat1, self.lat2, input=ifile, output = ofile)
+        #cdo.sellonlatbox(self.lon1, self.lon2, self.lat1, self.lat2, input=ifile, output = ofile)
 
         ds = xr.load_dataset(ofile, decode_times=False)
+
 
         #extract the variables from the file
         if self.mode == 'mask': 
@@ -48,7 +51,18 @@ class preprocessing():
                                 sst[i, j, k, l] = 1
 
         elif self.mode == 'image':
+            #ds = ds.sel(time=slice(24*365.25*46, 24*365.25*63))
+            time_var = ds.time
+            ds['time'] = netCDF4.num2date(time_var[:],time_var.units)
+            ds_monthly = ds.groupby('time.month').mean('time')
+            ds = ds.sel(time=slice('2004-01', '2020-10'))
+
+            sst_mean = ds_monthly.thetao.values
             sst = ds.thetao.values
+
+            for i in range(len(sst)):
+                sst[i] = sst[i] - sst_mean[i%12]
+
             x = np.isnan(sst)
             n = sst.shape
             sst[x] = 0
@@ -58,7 +72,8 @@ class preprocessing():
         n = sst.shape
         rest2 = np.zeros((n[0], n[1], n[2], self.new_im_size - n[3]))
         sst = np.concatenate((sst, rest2), axis=3)
-        
+
+
         n = sst.shape
         return sst, n
 
@@ -67,7 +82,7 @@ class preprocessing():
         
         sst_new, n = self.__getitem__()
         pixel_plot = plt.figure()
-        pixel_plot = plt.imshow(sst_new[0, 0, :, :], vmin = -10, vmax = 40)
+        pixel_plot = plt.imshow(sst_new[0, 0, :, :], vmin = -5, vmax = 5)
         plt.colorbar(pixel_plot)
         #plt.savefig(self.image_path + self.name + '.pdf')
         plt.show()
@@ -85,6 +100,7 @@ class preprocessing():
 
 dataset = preprocessing('original_image/Image_3d_1958_2020', 128, -65, -5, 20, 69,'image')
 sst, n = dataset.__getitem__()
-dataset.plot()
-dataset.save_data()
 print(sst.shape)
+dataset.plot()
+#dataset.save_data()
+#print(sst.shape)
