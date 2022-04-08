@@ -11,15 +11,16 @@ import netCDF4
 
 class preprocessing():
     
-    def __init__(self, name, new_im_size, mode, depth):
+    def __init__(self, path, name, new_im_size, mode, depth, attributes):
         super(preprocessing, self).__init__()
 
-        self.path = '../Asi_maskiert/'
+        self.path = path
         self.image_path = '../Asi_maskiert/pdfs/'
         self.name = name
         self.new_im_size = new_im_size
         self.mode = mode
         self.depth = depth
+        self.attributes = attributes
 
     def __getitem__(self):
         
@@ -86,17 +87,22 @@ class preprocessing():
         sst_new, n = self.__getitem__()
 
         #create new h5 file with symmetric ssts
-        f = h5py.File(self.path + self.name + '_newgrid.hdf5', 'w')
+        f = h5py.File(self.path + self.name + self.attributes + '.hdf5', 'w')
         dset1 = f.create_dataset('tos_sym', (n[0], n[1], n[2], n[3]), dtype = 'float32', data = sst_new)
         f.close()
 
 
+cfg.set_preprocessing_args()
 
-dataset = preprocessing('original_masks/Maske_1970_1985_newgrid', 128, 'mask', 3)
-dataset2 = preprocessing('original_image/Image_r10_newgrid', 128, 'image', 3)
-#sst, n = dataset.__getitem__()
-#print(sst.shape)
-#dataset2.plot()
-#dataset.save_data()
-#dataset2.save_data()
-#print(sst.shape)
+if cfg.mode == 'image':
+    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attributes)
+    dataset.save_data()
+elif cfg.mode == 'mask':
+    dataset = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes)
+    dataset.save_data()
+elif cfg.mode == 'both':
+    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attributes)
+    dataset1 = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes)
+    dataset.save_data()
+    dataset1.save_data()
+

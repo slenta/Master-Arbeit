@@ -16,6 +16,7 @@ from dataloader import MaskDataset
 from dataloader import SpecificValDataset
 from util.io import load_ckpt
 from util.io import save_ckpt
+import config as cfg
 
 import torch.multiprocessing as mp
 #mp.set_start_method('spawn')
@@ -42,85 +43,59 @@ class InfiniteSampler(data.sampler.Sampler):
                 i = 0
 
 
-parser = argparse.ArgumentParser()
-# training options
-parser.add_argument('--root', type=str, default='/')
-parser.add_argument('--mask_root', type=str, default='../Asi_maskiert/masked_images/')
-parser.add_argument('--save_part', type=str, default='part_1')
-parser.add_argument('--save_dir', type=str, default='../Asi_maskiert/results/')
-parser.add_argument('--log_dir', type=str, default='./logs/default')
-parser.add_argument('--device', type=str, default='cuda')
-parser.add_argument('--mask_year', type=str, default='2020')
-parser.add_argument('--im_year', type=str, default='tho_r8_12')
-parser.add_argument('--lr', type=float, default=2e-4)
-parser.add_argument('--lr_finetune', type=float, default=5e-5)
-parser.add_argument('--max_iter', type=int, default=800000)
-parser.add_argument('--batch_size', type=int, default=4)
-parser.add_argument('--n_threads', type=int, default=18) 
-parser.add_argument('--save_model_interval', type=int, default=50000)
-parser.add_argument('--vis_interval', type=int, default=50000)
-parser.add_argument('--log_interval', type=int, default=50)
-parser.add_argument('--image_size', type=int, default=256)
-parser.add_argument('--in_channels', type=int, default=3)
-parser.add_argument('--depth', action='store_true')
-parser.add_argument('--resume_iter', type=str)
-parser.add_argument('--finetune', action='store_true')
-args = parser.parse_args()
+cfg.set_train_args()
 
-torch.backends.cudnn.benchmark = True
-device = torch.device('cuda')
+if not os.path.exists(cfg.save_dir):
+    os.makedirs('{:s}/images'.format(cfg.save_dir))
+    os.makedirs('{:s}/ckpt'.format(cfg.save_dir))
 
-if not os.path.exists(args.save_dir):
-    os.makedirs('{:s}/images'.format(args.save_dir))
-    os.makedirs('{:s}/ckpt'.format(args.save_dir))
+if not os.path.exists(cfg.log_dir):
+    os.makedirs(cfg.log_dir)
+writer = SummaryWriter(log_dir=cfg.log_dir)
 
-if not os.path.exists(args.log_dir):
-    os.makedirs(args.log_dir)
-writer = SummaryWriter(log_dir=args.log_dir)
-
-size = (args.image_size, args.image_size)
+size = (cfg.image_size, cfg.image_size)
 #size = (256, 256)
 img_tf = transforms.Compose(
     [transforms.Normalize(mean=opt.MEAN, std=opt.STD)])
 mask_tf = transforms.Compose(
     [transforms.ToTensor()])
 
-if args.depth:
+if cfg.depth:
     depth = True
 else:
     depth = False
 
-dataset_train = MaskDataset(depth, args.in_channels, args.mask_year, args.im_year, mode='train')
-dataset_val = MaskDataset(depth, args.in_channels, args.mask_year, args.im_year, mode='val')
+dataset_train = MaskDataset(depth, cfg.in_channels, cfg.mask_year, cfg.im_year, mode='train')
+dataset_val = MaskDataset(depth, cfg.in_channels, cfg.mask_year, cfg.im_year, mode='val')
 
 iterator_train = iter(data.DataLoader(dataset_train, 
-    batch_size=args.batch_size, sampler=InfiniteSampler(len(dataset_train)),
-    num_workers=args.n_threads))
+    batch_size= cfg.batch_size, sampler=InfiniteSampler(len(dataset_train)),
+    num_workers= cfg.n_threads))
 print(len(dataset_train))
 
-model = PConvUNet().to(device)
+model = PConvUNet().to(cfg.device)
 
-if args.finetune:
-    lr = args.lr_finetune
+if cfg.finetune:
+    lr = cfg.lr_finetune
     model.freeze_enc_bn = True
 else:
-    lr = args.lr
+    lr = cfg.lr
 
 start_iter = 0
 optimizer = torch.optim.Adam(
     filter(lambda p: p.requires_grad, model.parameters()), lr=lr)
-criterion = InpaintingLoss(VGG16FeatureExtractor()).to(device)
+criterion = InpaintingLoss(VGG16FeatureExtractor()).to(cfg.device)
 
-if args.resume_iter:
+if cfg.resume_iter:
     start_iter = load_ckpt(
-        '{}/ckpt/{}.pth'.format(args.save_dir, args.resume_iter), [('model', model)], [('optimizer', optimizer)])
+        '{}/ckpt/{}.pth'.format(cfg.save_dir, cfg.resume_iter), [('model', model)], [('optimizer', optimizer)])
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     print('Starting from iter ', start_iter)
 
-for i in tqdm(range(start_iter, args.max_iter)):
+for i in tqdm(range(start_iter, cfg.max_iter)):
     model.train()
-    image, mask, gt = [x.to(device) for x in next(iterator_train)]
+    image, mask, gt = [x.to(cfg.device) for x in next(iterator_train)]
     output, _ = model(image, mask)
     loss_dict = criterion(image, mask, output, gt)
 
@@ -128,20 +103,20 @@ for i in tqdm(range(start_iter, args.max_iter)):
     for key, coef in opt.LAMBDA_DICT.items():
         value = coef * loss_dict[key]
         loss += value
-        if (i + 1) % args.log_interval == 0:
+        if (i + 1) % cfg.log_interval == 0:
             writer.add_scalar('loss_{:s}'.format(key), value.item(), i + 1)
 
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
 
-    if (i + 1) % args.save_model_interval == 0 or (i + 1) == args.max_iter:
-        save_ckpt('{:s}/ckpt/{:d}.pth'.format(args.save_dir, i + 1),
+    if (i + 1) % cfg.save_model_interval == 0 or (i + 1) == cfg.max_iter:
+        save_ckpt('{:s}/ckpt/{:d}.pth'.format( cfg.save_dir, i + 1),
                   [('model', model)], [('optimizer', optimizer)], i + 1)
 
-    if (i + 1) % args.vis_interval == 0:
+    if (i + 1) % cfg.vis_interval == 0:
         model.eval()
-        evaluate(model, dataset_val, device,
-                 '{:s}/images/{:s}/test_{:d}'.format(args.save_dir, args.save_part, i + 1))
+        evaluate(model, dataset_val, cfg.device,
+                 '{:s}/images/{:s}/test_{:d}'.format( cfg.save_dir, cfg.save_part, i + 1))
 
 writer.close()
