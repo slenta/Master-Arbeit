@@ -49,6 +49,9 @@ im_year = None
 vis_interval = None
 in_channels = None
 resume_iter = None
+image_size = None
+mode = None
+attributes = None
 
 def set_train_args():
     arg_parser = argparse.ArgumentParser()
