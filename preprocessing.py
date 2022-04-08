@@ -11,7 +11,7 @@ import netCDF4
 
 class preprocessing():
     
-    def __init__(self, name, new_im_size, mode):
+    def __init__(self, name, new_im_size, mode, depth):
         super(preprocessing, self).__init__()
 
         self.path = '../Asi_maskiert/'
@@ -19,15 +19,14 @@ class preprocessing():
         self.name = name
         self.new_im_size = new_im_size
         self.mode = mode
+        self.depth = depth
 
     def __getitem__(self):
         
         ifile = self.path + self.name + '.nc'
-        ofile = self.path + self.name + '_newgrid.nc'
-
-        #cdo.sellonlatbox(self.lon1, self.lon2, self.lat1, self.lat2, input=ifile, output = ofile)
-
-        ds = xr.load_dataset(ofile, decode_times=False)
+        ds = xr.load_dataset(ifile, decode_times=False)
+        #ds = ds.sel(lon = slice(self.lon1, self.lon2))
+        #ds = ds.sel(lat = slice(self.lat1, self.lat2))
 
 
         #extract the variables from the file
@@ -45,7 +44,7 @@ class preprocessing():
                                 sst[i, j, k, l] = 1
 
         elif self.mode == 'image':
-            #ds = ds.sel(time=slice(24*365.25*46, 24*365.25*63))
+            
             time_var = ds.time
             ds['time'] = netCDF4.num2date(time_var[:],time_var.units)
             ds_monthly = ds.groupby('time.month').mean('time')
@@ -65,7 +64,7 @@ class preprocessing():
         sst = np.concatenate((sst, rest), axis=2)
         n = sst.shape
         rest2 = np.zeros((n[0], n[1], n[2], self.new_im_size - n[3]))
-        sst = np.concatenate((sst, rest2), axis=3)
+        sst = np.concatenate((sst, rest2), axis=3)[:, :self.depth, :, :]
 
 
         n = sst.shape
@@ -77,6 +76,7 @@ class preprocessing():
         sst_new, n = self.__getitem__()
         pixel_plot = plt.figure()
         pixel_plot = plt.imshow(sst_new[0, 0, :, :], vmin = -5, vmax = 5)
+        print(sst_new.shape)
         plt.colorbar(pixel_plot)
         #plt.savefig(self.image_path + self.name + '.pdf')
         plt.show()
@@ -92,11 +92,11 @@ class preprocessing():
 
 
 
-#dataset = preprocessing('original_masks/Maske_2001_2020', 128, 'mask')
-#dataset2 = preprocessing('original_image/Image_r8_12', 128, 'image')
+dataset = preprocessing('original_masks/Maske_2001_2020', 128, 'mask')
+dataset2 = preprocessing('original_image/Image_r10_newgrid', 128, 'image', 3)
 #sst, n = dataset.__getitem__()
 #print(sst.shape)
-#dataset.plot()
+#dataset2.plot()
 #dataset.save_data()
 #dataset2.save_data()
 #print(sst.shape)
