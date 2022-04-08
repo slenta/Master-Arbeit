@@ -107,6 +107,7 @@ class MaskDataset(Dataset):
         mask = np.repeat(mask, 5, axis=0)
         
         n = image.shape
+        print(mask.shape)
         mask = mask[:n[0], :, :, :]
         m = mask.shape
 
