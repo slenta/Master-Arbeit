@@ -55,7 +55,7 @@ class preprocessing():
             ds['time'] = netCDF4.num2date(time_var[:],time_var.units)
             ds_monthly = ds.groupby('time.month').mean('time')
             ds = ds.sel(time=slice('2004-01', '2020-10'))
-            
+
             sst_mean = ds_monthly.thetao.values
             sst = ds.thetao.values
 
@@ -100,14 +100,14 @@ class preprocessing():
 cfg.set_preprocessing_args()
 
 if cfg.mode == 'image':
-    dataset = preprocessing(cfg.image_dir, 'Image_3d_1958_2020_newgrid', cfg.image_size, 'image', cfg.depth, cfg.attributes, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
+    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attributes, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
     dataset.save_data()
 elif cfg.mode == 'mask':
     dataset = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes)
     dataset.save_data()
 elif cfg.mode == 'both':
-    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attributes)
-    dataset1 = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes)
+    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attributes, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
+    dataset1 = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
     dataset.save_data()
     dataset1.save_data()
 
