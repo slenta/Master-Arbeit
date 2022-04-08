@@ -11,7 +11,7 @@ import netCDF4
 
 class preprocessing():
     
-    def __init__(self, path, name, new_im_size, mode, depth, attributes):
+    def __init__(self, path, name, new_im_size, mode, depth, attributes, lon1, lon2, lat1, lat2):
         super(preprocessing, self).__init__()
 
         self.path = path
@@ -21,13 +21,18 @@ class preprocessing():
         self.mode = mode
         self.depth = depth
         self.attributes = attributes
+        self.lon1 = int(lon1)
+        self.lon2 = int(lon2)
+        self.lat1 = int(lat1)
+        self.lat2 = int(lat2)
 
     def __getitem__(self):
         
         ifile = self.path + self.name + '.nc'
         ds = xr.load_dataset(ifile, decode_times=False)
-        #ds = ds.sel(lon = slice(self.lon1, self.lon2))
+        
         #ds = ds.sel(lat = slice(self.lat1, self.lat2))
+        #ds = ds.sel(lon = slice(self.lon1, self.lon2))
 
 
         #extract the variables from the file
@@ -50,7 +55,7 @@ class preprocessing():
             ds['time'] = netCDF4.num2date(time_var[:],time_var.units)
             ds_monthly = ds.groupby('time.month').mean('time')
             ds = ds.sel(time=slice('2004-01', '2020-10'))
-
+            
             sst_mean = ds_monthly.thetao.values
             sst = ds.thetao.values
 
@@ -95,7 +100,7 @@ class preprocessing():
 cfg.set_preprocessing_args()
 
 if cfg.mode == 'image':
-    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attributes)
+    dataset = preprocessing(cfg.image_dir, 'Image_3d_1958_2020_newgrid', cfg.image_size, 'image', cfg.depth, cfg.attributes, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
     dataset.save_data()
 elif cfg.mode == 'mask':
     dataset = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes)
