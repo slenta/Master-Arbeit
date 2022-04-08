@@ -45,6 +45,8 @@ class InfiniteSampler(data.sampler.Sampler):
 
 cfg.set_train_args()
 
+print(cfg.save_dir)
+
 if not os.path.exists(cfg.save_dir):
     os.makedirs('{:s}/images'.format(cfg.save_dir))
     os.makedirs('{:s}/ckpt'.format(cfg.save_dir))

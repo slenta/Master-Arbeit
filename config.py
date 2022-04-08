@@ -66,7 +66,7 @@ def set_train_args():
     arg_parser.add_argument('--image_dir', type=str, default='../Asi_maskiert/original_image/')
     arg_parser.add_argument('--save_part', type=str, default='part_1')
     arg_parser.add_argument('--save_dir', type=str, default='../Asi_maskiert/results/')
-    arg_parser.add_argument('--log_dir', type=str, default='./logs/default')
+    arg_parser.add_argument('--log_dir', type=str, default='./logs/default/')
     arg_parser.add_argument('--device', type=str, default='cuda')
     arg_parser.add_argument('--mask_year', type=str, default='2020')
     arg_parser.add_argument('--im_year', type=str, default='tho_r8_12')
@@ -79,7 +79,7 @@ def set_train_args():
     arg_parser.add_argument('--save_model_interval', type=int, default=50000)
     arg_parser.add_argument('--vis_interval', type=int, default=50000)
     arg_parser.add_argument('--log_interval', type=int, default=50)
-    arg_parser.add_argument('--image_size', type=int, default=256)
+    arg_parser.add_argument('--image_size', type=int, default=128)
     arg_parser.add_argument('--in_channels', type=int, default=3)
     arg_parser.add_argument('--depth', action='store_true')
     arg_parser.add_argument('--resume_iter', type=str)
@@ -143,6 +143,7 @@ def set_train_args():
     depth = args.depth
     resume_iter = args.resume_iter
     in_channels = args.in_channels
+    save_dir = args.save_dir
 
 
 
@@ -244,8 +245,5 @@ def set_preprocessing_args():
     lon2 = args.lon2
     lat1 = args.lat1
     lat2 = args.lat2
-
-
-
 
 
