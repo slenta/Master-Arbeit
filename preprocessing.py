@@ -92,7 +92,7 @@ class preprocessing():
 
 
 
-dataset = preprocessing('original_masks/Maske_2001_2020', 128, 'mask', 3)
+dataset = preprocessing('original_masks/Maske_1970_1985_newgrid', 128, 'mask', 3)
 dataset2 = preprocessing('original_image/Image_r10_newgrid', 128, 'image', 3)
 #sst, n = dataset.__getitem__()
 #print(sst.shape)
