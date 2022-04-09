@@ -71,12 +71,11 @@ class preprocessing():
         n = sst.shape
         rest2 = np.zeros((n[0], n[1], n[2], self.new_im_size - n[3]))
         sst = np.concatenate((sst, rest2), axis=3)[:, :self.depth, :, :]
+        n = sst.shape
 
         print(self.depth)
 
         print(n)
-
-        n = sst.shape
         return sst, n
 
 
