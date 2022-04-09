@@ -56,6 +56,7 @@ lon1 = None
 lon2 = None
 lat1 = None
 lat2 = None
+save_part = None
 
 def set_train_args():
     arg_parser = argparse.ArgumentParser()
@@ -116,6 +117,7 @@ def set_train_args():
     global lstm_steps
     global encoding_layers
     global pooling_layers
+    global save_part
 
     root_dir = args.root_dir
     mask_year = args.mask_year
@@ -144,6 +146,7 @@ def set_train_args():
     resume_iter = args.resume_iter
     in_channels = args.in_channels
     save_dir = args.save_dir
+    save_part = args.save_part
 
 
 
