@@ -2,6 +2,7 @@ from cProfile import label
 import h5py
 from isort import file
 from matplotlib import image
+from matplotlib.pyplot import title
 import numpy as np
 import pylab as plt
 import torch
@@ -94,40 +95,69 @@ def vis_single(timestep, path, name, argo_state, type, param, title):
 
 def visualisation(iter):
     
-    f = h5py.File('../Asi_maskiert/results/images/r8_16_newgrid/Maske_2020_newgrid/test_' + iter + '.hdf5', 'r')
+    f = h5py.File('../Asi_maskiert/results/images/depth/test_' + iter + '.hdf5', 'r')
     fm = h5py.File('../Asi_maskiert/original_masks/Kontinentmaske.hdf5', 'r')
     
     continent_mask = fm.get('tos_sym')
-    image_data = f.get('image')[7, 2, :, :]
-    mask_data = f.get('mask')[7, 2,:, :]
-    output_data = f.get('output')[7, 2,:, :]
+    image_data = f.get('image')[1, 0, :, :]
+    mask_data = f.get('mask')[1, 0,:, :]
+    output_data = f.get('output')[1, 0,:, :]
+
+    image_runter = f.get('image')[1, 2, :, :]
+    
+    print(np.sum(image_data - image_runter))
+
+    error = np.zeros((8, 3))
+    for i in range(8):
+        for j in range(3):
+            image = f.get('image')[i, j, :, :]
+            output = f.get('output')[i, j, :, :]
+            mask = f.get('mask')[i, j, :, :]
+            outputcomp = mask*image + (1 - mask)*output
+
+            error[i, j] = np.mean((np.array(outputcomp) - np.array(image))**2)
+
+
+    print(error)
 
     mask = torch.from_numpy(mask_data)
     output = torch.from_numpy(output_data)
     image = torch.from_numpy(image_data)
     outputcomp = mask*image + (1 - mask)*output
-    Mse = np.mean((np.array(outputcomp) - np.array(image))**2)
-    print(Mse)
+    print(np.mean(error))
 
-    plt.figure(figsize=(24, 6))
-    plt.subplot(1, 4, 1)
+    fig = plt.figure(figsize=(10, 7), constrained_layout=True)
+    fig.suptitle('Anomaly North Atlantic SSTs')
+    plt.subplot(2, 2, 3)
     plt.title('Masked Image')
-    im1 = plt.imshow(image * mask, vmin=-5, vmax=30, cmap='jet', aspect='auto')
-    plt.subplot(1, 4, 2)
+    im1 = plt.imshow(image * mask, cmap='jet', vmin=-3, vmax=3, aspect='auto')
+    plt.xlabel('Transformed Longitudes')
+    plt.ylabel('Transformed Latitudes')
+    plt.colorbar(label='Temperature in °C')
+    plt.subplot(2, 2, 2)
     plt.title('NN Output')
-    im2 = plt.imshow(outputcomp, cmap = 'jet', vmin=-5, vmax=30, aspect = 'auto')
-    plt.subplot(1, 4, 3)
+    im2 = plt.imshow(outputcomp, cmap = 'jet', vmin=-3, vmax=3, aspect = 'auto')
+    plt.xlabel('Transformed Longitudes')
+    plt.ylabel('Transformed Latitudes')
+    plt.colorbar(label='Temperature in °C')
+    plt.subplot(2, 2, 1)
     plt.title('Original Assimilation Image')
-    im3 = plt.imshow(image, cmap='jet', vmin=-5, vmax=30, aspect='auto')
-    plt.subplot(1, 4, 4)
+    im3 = plt.imshow(image, cmap='jet', vmin=-3, vmax=3, aspect='auto')
+    plt.xlabel('Transformed Longitudes')
+    plt.ylabel('Transformed Latitudes')
+    plt.colorbar(label='Temperature in °C')
+    plt.subplot(2, 2, 4)
     plt.title('Error')
-    im5 = plt.imshow(image - output, vmin=-1, vmax=1, cmap='jet', aspect='auto')
-    #plt.savefig('../Asi_maskiert/results/images/r1011_shuffle_newgrid/short_val/Maske_1970_1985/test_' + iter + '.pdf')
+    im5 = plt.imshow(image - output, vmin=-1.5, vmax=1.5, cmap='jet', aspect='auto')
+    plt.xlabel('Transformed Longitudes')
+    plt.ylabel('Transformed Latitudes')
+    plt.colorbar(label='Temperature in °C')
+    plt.savefig('../Asi_maskiert/results/images/depth/test_' + iter + '.pdf')
     plt.show()
 
-visualisation('1100000')
+visualisation('600000')
 
-#vis_single(753, '../Asi_maskiert/original_image/', 'Image_3d_newgrid', 'Argo-era', 'image', 'image', 'North Atlantic Assimilation October 2020')
+#vis_single(753, '../Asi_maskiert/original_image/', 'Image_3d_newgrid', 'r1011_shuffle_newgrid/short_val/Maske_1970_1985r1011_shuffle_newgrid/short_val/Maske_1970_1985Argo-era', 'image', 'image', 'North Atlantic Assimilation October 2020')
 #vis_single(9, '../Asi_maskiert/original_masks/', 'Maske_2020_newgrid', 'pre-Argo-era', 'mask', 'mask', 'North Atlantic Observations October 2020')
 
 #vis_single(1, '../Asi_maskiert/results/images/r1011_shuffle_newgrid/short_val/Maske_1970_1985/', 'test_700000', 'pre-argo-era', 'output', 'mask', 'Pre-Argo-Era Masks')
