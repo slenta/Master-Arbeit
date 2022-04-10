@@ -7,6 +7,7 @@ from torchvision import models
 import pylab as plt
 import config as cfg
 
+cfg.set_train_args()
 
 def weights_init(init_type='gaussian'):
     def init_fun(m):
