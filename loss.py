@@ -39,6 +39,10 @@ class InpaintingLoss(nn.Module):
             feat_output_comp = self.extractor(torch.cat([output_comp]*3, 1))
             feat_output = self.extractor(torch.cat([output]*3, 1))
             feat_gt = self.extractor(torch.cat([gt]*3, 1))
+        elif output.shape[1] == 10:
+            feat_output_comp = self.extractor(torch.cat([output_comp]*10, 1))
+            feat_output = self.extractor(torch.cat([output]*10, 1))
+            feat_gt = self.extractor(torch.cat([gt]*10, 1))
         else:
             raise ValueError('only gray an')
 
