@@ -57,6 +57,8 @@ lon2 = None
 lat1 = None
 lat2 = None
 save_part = None
+attribute0 = None
+attribute1 = None
 
 def set_train_args():
     arg_parser = argparse.ArgumentParser()
@@ -215,7 +217,8 @@ def set_preprocessing_args():
     arg_parser.add_argument('--mask_name', type=str, default='Maske_1970_1985_newgrid')
     arg_parser.add_argument('--depth', type=int, default=3)
     arg_parser.add_argument('--mode', type=str, default='image')
-    arg_parser.add_argument('--attributes', type=str, default='_anomalies')
+    arg_parser.add_argument('--attribute0', type=str, default='anomalies')   
+    arg_parser.add_argument('--attribute1', type=str, default='depth')
     arg_parser.add_argument('--lon1', type=str, default='-65')
     arg_parser.add_argument('--lon2', type=str, default='-5')
     arg_parser.add_argument('--lat1', type=str, default='20')
@@ -230,11 +233,12 @@ def set_preprocessing_args():
     global mask_name
     global depth
     global mode
-    global attributes
     global lon1
     global lon2
     global lat1
     global lat2
+    global attribute0
+    global attribute1
 
     image_size = args.image_size
     image_dir = args.image_dir
@@ -243,10 +247,11 @@ def set_preprocessing_args():
     mask_name = args.mask_name
     depth = args.depth
     mode = args.mode
-    attributes = args.attributes
     lon1 = args.lon1
     lon2 = args.lon2
     lat1 = args.lat1
     lat2 = args.lat2
+    attribute0 = args.attribute0
+    attribute1 = args.attribute1
 
 

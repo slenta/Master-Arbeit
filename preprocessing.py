@@ -11,7 +11,7 @@ import netCDF4
 
 class preprocessing():
     
-    def __init__(self, path, name, new_im_size, mode, depth, attributes, lon1, lon2, lat1, lat2):
+    def __init__(self, path, name, new_im_size, mode, depth, attribute1, attribute2, lon1, lon2, lat1, lat2):
         super(preprocessing, self).__init__()
 
         self.path = path
@@ -20,7 +20,7 @@ class preprocessing():
         self.new_im_size = new_im_size
         self.mode = mode
         self.depth = depth
-        self.attributes = attributes
+        self.attributes = [attribute1, attribute2]
         self.lon1 = int(lon1)
         self.lon2 = int(lon2)
         self.lat1 = int(lat1)
@@ -59,8 +59,9 @@ class preprocessing():
             sst_mean = ds_monthly.thetao.values
             sst = ds.thetao.values
 
-            for i in range(len(sst)):
-                sst[i] = sst[i] - sst_mean[i%12]
+            if self.attributes[0]=='anomalies':
+                for i in range(len(sst)):
+                    sst[i] = sst[i] - sst_mean[i%12]
 
             x = np.isnan(sst)
             n = sst.shape
@@ -71,11 +72,12 @@ class preprocessing():
         n = sst.shape
         rest2 = np.zeros((n[0], n[1], n[2], self.new_im_size - n[3]))
         sst = np.concatenate((sst, rest2), axis=3)[:, :self.depth, :, :]
+
+        if self.attributes[1]=='depth':
+            sst = sst[:, 0, :, :]
+
         n = sst.shape
 
-        print(self.depth)
-
-        print(n)
         return sst, n
 
 
@@ -94,15 +96,16 @@ class preprocessing():
         sst_new, n = self.__getitem__()
 
         #create new h5 file with symmetric ssts
-        f = h5py.File(self.path + self.name + self.attributes + '.hdf5', 'w')
-        dset1 = f.create_dataset('tos_sym', (n[0], n[1], n[2], n[3]), dtype = 'float32', data = sst_new)
+        f = h5py.File(self.path + self.name + '_' +  self.attributes[0] + '_' + self.attributes[1] + '.hdf5', 'w')
+        dset1 = f.create_dataset('tos_sym', shape=n, dtype = 'float32', data = sst_new)
         f.close()
 
 
 cfg.set_preprocessing_args()
 
 if cfg.mode == 'image':
-    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attributes, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
+    print(cfg.attribute0, cfg.attribute1)
+    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attribute0, cfg.attribute1, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
     dataset.save_data()
 elif cfg.mode == 'mask':
     dataset = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes)
