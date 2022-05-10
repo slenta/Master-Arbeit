@@ -7,11 +7,13 @@ import xarray as xr
 import config as cfg
 import h5py
 import netCDF4
+import cdo 
+cdo = cdo.Cdo()
 
 
 class preprocessing():
     
-    def __init__(self, path, name, new_im_size, mode, depth, attribute1, attribute2, lon1, lon2, lat1, lat2):
+    def __init__(self, path, name, year, new_im_size, mode, depth, attribute_depth, attribute_anomaly, attribute_argo, lon1, lon2, lat1, lat2):
         super(preprocessing, self).__init__()
 
         self.path = path
@@ -20,16 +22,21 @@ class preprocessing():
         self.new_im_size = new_im_size
         self.mode = mode
         self.depth = depth
-        self.attributes = [attribute1, attribute2]
+        self.attributes = [attribute_depth, attribute_anomaly, attribute_argo]
         self.lon1 = int(lon1)
         self.lon2 = int(lon2)
         self.lat1 = int(lat1)
         self.lat2 = int(lat2)
+        self.year = year
 
     def __getitem__(self):
-        
-        ifile = self.path + self.name + '.nc'
-        ds = xr.load_dataset(ifile, decode_times=False)
+
+        ifile = self.path + self.name + self.year + '.nc'
+        ofile = self.path + self.name + self.year + '_newgrid.nc'
+
+        cdo.sellonlatbox(self.lon1, self.lon2, self.lat1, self.lat2, input = ifile, output = ofile)
+
+        ds = xr.load_dataset(ofile, decode_times=False)
         
         #ds = ds.sel(lat = slice(self.lat1, self.lat2))
         #ds = ds.sel(lon = slice(self.lon1, self.lon2))
@@ -91,28 +98,34 @@ class preprocessing():
         #plt.savefig(self.image_path + self.name + '.pdf')
         plt.show()
 
+    def depths(self):
+
+        ofile = self.path + self.name + self.year + '_newgrid.nc'        
+        ds = xr.load_dataset(ofile, decode_times=False)
+        depth = ds.depth.values
+
+        return depth[:self.depth]
+
     def save_data(self):
 
         sst_new, n = self.__getitem__()
 
         #create new h5 file with symmetric ssts
-        f = h5py.File(self.path + self.name + '_' +  self.attributes[0] + '_' + self.attributes[1] + '.hdf5', 'w')
+        f = h5py.File(self.path + self.name + '_' +  self.attributes[0] + '_' + self.attributes[1] + '_' + self.attributes[2] + '.hdf5', 'w')
         dset1 = f.create_dataset('tos_sym', shape=n, dtype = 'float32', data = sst_new)
         f.close()
 
 
-cfg.set_preprocessing_args()
+cfg.set_train_args()
 
 if cfg.mode == 'image':
-    print(cfg.attribute0, cfg.attribute1)
-    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attribute0, cfg.attribute1, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
+    dataset = preprocessing(cfg.im_dir, cfg.im_name, cfg.im_year, cfg.image_size, 'image', cfg.in_channels, cfg.attribute_depth, cfg.attribute_anomaly, cfg.attribute_argo, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
     dataset.save_data()
 elif cfg.mode == 'mask':
-    dataset = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes)
+    dataset = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.mask_year, cfg.image_size, 'mask', cfg.in_channels, cfg.attribute_depth, cfg.attribute_anomaly, cfg.attribute_argo, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
     dataset.save_data()
 elif cfg.mode == 'both':
-    dataset = preprocessing(cfg.image_dir, cfg.image_name, cfg.image_size, 'image', cfg.depth, cfg.attributes, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
-    dataset1 = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.image_size, 'mask', cfg.depth, cfg.attributes, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
+    dataset = preprocessing(cfg.im_dir, cfg.im_name, cfg.im_year, cfg.image_size, 'image', cfg.in_channels, cfg.attribute_depth, cfg.attribute_anomaly, cfg.attribute_argo, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
+    dataset1 = preprocessing(cfg.mask_dir, cfg.mask_name, cfg.mask_year, cfg.image_size, 'mask', cfg.in_channels, cfg.attribute_depth, cfg.attribute_anomaly, cfg.attribute_argo, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
     dataset.save_data()
     dataset1.save_data()
-

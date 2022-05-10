@@ -19,67 +19,6 @@ from image import unnormalize
 
 
 #dataloader and dataloader
-
-def preprocessing(new_im_size, path, name, year, type, plot):
-    
-    ds = xr.load_dataset(path + name + year + '.nc', decode_times=False)
-
-    #extract the variables from the file
-    if type == 'mask':
-        sst = ds.tho.values[:, 0, :, :]
-        n = sst.shape
-        
-        for i in range(n[0]):
-            for j in range(n[1]):
-                for k in range(n[2]):
-                    if np.isnan(sst[i, j, k]) == True:
-                        sst[i, j, k] = 0
-                    else:
-                        sst[i, j, k] = 1
-        
- 
-        rest = np.zeros((n[0], new_im_size - n[1], n[2]))
-        sst = np.concatenate((sst, rest), axis=1)
-        n = sst.shape
-        rest2 = np.zeros((n[0], n[1], new_im_size - n[2]))
-        sst_new = np.concatenate((sst, rest2), axis=2)
-
-        n = sst_new.shape
-        #create new h5 file with symmetric ssts
-        f = h5py.File(path + name + year + '.hdf5', 'w')
-        dset1 = f.create_dataset('tos_sym', (n[0], n[1], n[2]), dtype = 'float32', data = sst_new)
-        f.close()
-
-    if type == 'image':
-        sst = ds.thetao.values[:, 0, :, :]
-        x = np.isnan(sst)
-        n = sst.shape
-        sst[x] = 0
-
-        rest = np.zeros((n[0], new_im_size - n[1], n[2]))
-        sst = np.concatenate((sst, rest), axis=1)
-        n = sst.shape
-        rest2 = np.zeros((n[0], n[1], new_im_size - n[2]))
-        sst_new = np.concatenate((sst, rest2), axis=2)
-        n = sst_new.shape 
-        #create new h5 file with symmetric ssts
-        f = h5py.File(path + name + year + '.hdf5', 'w')
-        dset1 = f.create_dataset('tos_sym', (n[0], n[2], n[2]), dtype = 'float32',data = sst_new)
-        f.close()
-
-    #plot ssts in 2d plot
-    if plot == True:
-        pixel_plot = plt.figure()
-        pixel_plot = plt.imshow(sst_new[1], vmin = -5, vmax = 5)
-        plt.colorbar(pixel_plot)
-        plt.savefig('../Asi_maskiert/pdfs/' + name + '.pdf')
-        plt.show()
-        
-#preprocessing(128, '../Asi_maskiert/original_masks/', 'Maske_', '2001_2020_newgrid', type='mask', plot=False)
-#preprocessing(128, '../Asi_maskiert/original_image/', 'Image_', 'r10_11_newgrid', type='image', plot=False)
-
-
-
 class MaskDataset(Dataset):
 
     def __init__(self, depth, in_channels, year, im_year, mode):
@@ -107,7 +46,6 @@ class MaskDataset(Dataset):
         mask = np.repeat(mask, 5, axis=0)
         
         n = image.shape
-        print(mask.shape)
         mask = mask[:n[0], :, :, :]
         m = mask.shape
 

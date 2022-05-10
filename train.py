@@ -17,6 +17,8 @@ from dataloader import SpecificValDataset
 from util.io import load_ckpt
 from util.io import save_ckpt
 import config as cfg
+from preprocessing import preprocessing
+from evaluation import HeatContent
 
 import torch.multiprocessing as mp
 #mp.set_start_method('spawn')
@@ -45,7 +47,6 @@ class InfiniteSampler(data.sampler.Sampler):
 
 cfg.set_train_args()
 
-print(cfg.save_dir)
 
 if not os.path.exists(cfg.save_dir):
     os.makedirs('{:s}/images'.format(cfg.save_dir))
@@ -120,5 +121,14 @@ for i in tqdm(range(start_iter, cfg.max_iter)):
         model.eval()
         evaluate(model, dataset_val, cfg.device,
                  '{:s}/images/{:s}/test_{:d}'.format( cfg.save_dir, cfg.save_part, i + 1))
+    
+    #validate using validation ensemble member and create ohc timeseries
+    if (i + 1) % cfg.val_interval == 0:
+        prepo = preprocessing(cfg.im_dir, cfg.im_name, cfg.image_size, 'image', cfg.in_channels, cfg.attribute_depth, cfg.attribute_anomaly, cfg.attribute_argo, cfg.lon1, cfg.lon2, cfg.lat1, cfg.lat2)
+        prepo.save_data()
+        depths = prepo.depths()
 
+        val_dataset = MaskDataset(depth, cfg.in_channels, cfg.mask_year, cfg.eval_im_year, 'eval', shuffle=False)
+        ohc = HeatContent(depth_steps=depths, iter = i + 1)
+        ohc.creat_hc_timeseries(model, cfg.batch_size)
 writer.close()
